@@ -34,25 +34,27 @@ Người dùng có thể:
 ```bash
 git clone https://github.com/phngan23/Group-4-Python-Project.git
 cd Group-4-Python-Project
-
+```
 ### Bước 2: Tạo và kích hoạt môi trường ảo
 Window:
-
+```bash
 python -m venv .venv
-
 .venv\Scripts\activate
-
+```
 Mac:
-
+```bash
 python3 -m venv .venv
-
 source .venv/bin/activate
-
+```
 ### Bước 3: Cài đặt thư viện
+```bash
 pip install -r requirements.txt
-
+```
 ### Bước 4: Tạo database và migrate
+```bash
 python manage.py migrate
-
+```
 ### Bước 5: Chạy server
+```bash
 python manage.py runserver
+```
