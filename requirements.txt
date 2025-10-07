@@ -1,0 +1,26 @@
+# === Study Habit Tracker dependencies ===
+
+Django>=5.0,<6.0 # main framework
+python-decouple>=3.8
+pytz
+sqlparse
+asgiref
+requests
+Pillow
+django-crispy-forms 
+crispy-bootstrap5
+django-extensions
+# ----- Visualiztion
+matplotlib
+pandas
+numpy
+# -----
+scikit-learn # machine learning
+django-cors-headers
+whitenoise
+gunicorn
+
+# === Optional Dev Tools ===
+black
+flake8
+autopep8
