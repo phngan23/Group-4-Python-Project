@@ -58,3 +58,5 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
+Truy cập http://127.0.0.1:8000/, nếu hiện ra màn hình trắng với dòng "Let's start studying!" là đã thành công.
+
