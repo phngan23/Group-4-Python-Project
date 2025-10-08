@@ -35,10 +35,15 @@ Người dùng có thể:
 git clone https://github.com/phngan23/Group-4-Python-Project.git
 cd Group-4-Python-Project
 ```
-### Bước 2: Tạo và kích hoạt môi trường ảo
+### Bước 2: Tạo và kích hoạt môi trường ảo (chạy từng lệnh)
 Window:
 ```bash
 python -m venv .venv
+.venv\Scripts\activate
+```
+nếu bị lỗi, chạy các lệnh sau:
+```bash
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 .venv\Scripts\activate
 ```
 Mac:
