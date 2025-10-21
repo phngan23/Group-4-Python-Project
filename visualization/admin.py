@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import VisualizationConfig
 
-# Register your models here.
+@admin.register(VisualizationConfig)
+class VisualizationConfigAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'chart_type', 'updated_at')
+    list_filter = ('chart_type',)
+    search_fields = ('profile__user__username',)

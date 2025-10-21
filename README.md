@@ -11,7 +11,7 @@ Người dùng có thể:
 - Bấm giờ học và theo dõi hiệu suất mỗi ngày  
 - Tạo danh sách việc cần làm (to-do-list) và nhận email nhắc deadline  
 - Xem biểu đồ học tập và cảm xúc theo ngày/tuần/tháng  
-- Tích điểm để trồng cây ảo (gamification)  
+- Tích điểm để mua nhân vật ảo (gamification)  
 - Ghi lại cảm xúc sau mỗi buổi học để tự đánh giá tiến bộ  
 
 
