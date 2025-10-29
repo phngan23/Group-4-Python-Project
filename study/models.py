@@ -5,13 +5,18 @@ from django.utils import timezone
 
 # Model 1: Subject
 class Subject(models.Model):
+    # Liên kết đến người dùng (mỗi người có thể học nhiều môn)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='subjects')
+    # Tên môn học
     name = models.CharField(max_length=100)
-    color = models.CharField(max_length=7)  # Mã màu HEX cho môn học
+    color = models.CharField(max_length=7)  # Mã màu HEX cho môn học (dùng cho biểu đồ)
+    # Mục tiêu thời gian học mỗi tuần (đơn vị: giờ)
     target_hour_per_week = models.FloatField(default=5.0)
+    # Ngày tạo môn học
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        # Khi in ra object, hiển thị tên môn học
         return self.name
     
     def total_hours_this_week(self):
@@ -24,16 +29,25 @@ class Subject(models.Model):
 
 # Model 2: StudySession
 class StudySession(models.Model):
+    # Liên kết người dùng
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='study_sessions')
+    # Liên kết môn học
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='study_sessions')
+    
+    # Thời điểm bắt đầu, tạm dừng, kết thúc
     start_time = models.DateTimeField(default=timezone.now)
     pause_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
+    
+    # Tổng thời gian học (tính bằng giây)
     duration_seconds = models.PositiveIntegerField(default=0)
+    # Số xu thưởng sau buổi học
     points_awards = models.IntegerField(default=0)
+    # Trạng thái buổi học (đang học hay đã dừng)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
+        # Hiển thị tên khi in object
         return f"{self.subject.name} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
     
     def start(self):
@@ -53,6 +67,7 @@ class StudySession(models.Model):
         '''Tiếp tục học sau khi tạm dừng'''
         if self.pause_time:
             paused_duration = timezone.now() - self.pause_time
+            # Điều chỉnh start_time để không tính thời gian nghỉ
             self.start_time += paused_duration
             self.pause_time = None
             self.is_active = True
@@ -63,10 +78,14 @@ class StudySession(models.Model):
         self.end_time = timezone.now()
         self.is_active = False
         
+        # Tính tổng thời gian học
         self.duration_seconds = int((self.end_time - self.start_time).total_seconds())
+        # Tính điểm thưởng dựa trên thời gian học
         self.points_awarded = self.calculate_points()
+        # Cập nhật xu vào hồ sơ người dùng
         self.profile.coins += self.points_awarded
         self.profile.save(update_fields=['coins'])
+        
         self.save(update_fields=['end_time', 'is_active', 'duration_seconds', 'points_awarded'])
     
     def calculate_points(self):
@@ -83,9 +102,13 @@ class StudySession(models.Model):
         super().save(*args, **kwargs)
 
 class BreakSession(models.Model):
+    # Mỗi BreakSession thuộc 1 StudySession
     study_session = models.ForeignKey(StudySession, on_delete=models.CASCADE, related_name='breaks')
+    # Thời gian bắt đầu nghỉ
     start_time = models.DateTimeField(default=timezone.now)
+    # Thời gian kết thúc nghỉ
     end_time = models.DateTimeField(null=True, blank=True)
+    # Thời lượng nghỉ (tính bằng giây)
     duration_seconds = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
