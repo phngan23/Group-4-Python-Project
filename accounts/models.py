@@ -1,6 +1,3 @@
-
-
-# Create your models here.
 from django.db import models #tạo các bảng trong database
 from django.conf import settings # lấy cấu hình của ứng dụng
 
