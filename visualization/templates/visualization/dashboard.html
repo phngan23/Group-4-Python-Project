@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% block content %}
+<h1>Bảng điều khiển Thống kê</h1>
+
+<div style="max-width: 700px; margin-bottom: 30px;">
+    <h2>Thời gian học theo ngày</h2>
+    <canvas id="studyChart"></canvas>
+</div>
+
+<div style="display: flex; justify-content: space-around;">
+    <div style="max-width: 350px;">
+        <h2>Phân bổ môn học</h2>
+        <canvas id="subjectChart"></canvas>
+    </div>
+    
+    <div style="max-width: 350px;">
+        <h2>Biểu đồ cảm xúc</h2>
+        <canvas id="emotionChart"></canvas>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // 2.1. Lấy dữ liệu từ context Django đã render
+    // Đây chính là dòng code trong ảnh của bạn: const data = {{ ...|safe }};
+    // Dùng |safe là BẮT BUỘC để Django không "escape" các dấu ngoặc kép.
+    const studyData = {{ study_data_json|safe }};
+    const subjectData = {{ subject_data_json|safe }};
+    const emotionData = {{ emotion_data_json|safe }};
+
+    // 2.2. Vẽ Biểu đồ 1: Thời gian học (Bar Chart)
+    const ctxStudy = document.getElementById('studyChart').getContext('2d');
+    new Chart(ctxStudy, {
+        type: 'bar', // Loại biểu đồ
+        data: {
+            labels: studyData.labels, // Nhãn trục X (các ngày)
+            datasets: [{
+                label: 'Số phút đã học',
+                data: studyData.data, // Dữ liệu trục Y (số phút)
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // 2.3. Vẽ Biểu đồ 2: Môn học (Pie Chart)
+    const ctxSubject = document.getElementById('subjectChart').getContext('2d');
+    new Chart(ctxSubject, {
+        type: 'pie', // Loại biểu đồ
+        data: {
+            labels: subjectData.labels, // Tên các môn học
+            datasets: [{
+                data: subjectData.data, // Dữ liệu (số phút)
+                backgroundColor: [ // Tự động thêm màu cho đẹp
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                ],
+            }]
+        }
+    });
+
+    // 2.4. Vẽ Biểu đồ 3: Cảm xúc (Doughnut Chart - tương tự Pie)
+    const ctxEmotion = document.getElementById('emotionChart').getContext('2d');
+    new Chart(ctxEmotion, {
+        type: 'doughnut', // Loại biểu đồ
+        data: {
+            labels: emotionData.labels, // Các loại cảm xúc
+            datasets: [{
+                data: emotionData.data, // Số lần xuất hiện
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                ],
+            }]
+        }
+    });
+
+</script>
+
+{% endblock %}

@@ -27,8 +27,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("coins", models.IntegerField(default=0)),
-                ("timezone", models.CharField(default="UTC", max_length=50)),
-                ("email_reminders", models.BooleanField(default=True)),
+                ("timezone", models.CharField(default="UTC + 7 hours", max_length=50)),
+                ("email_reminder", models.BooleanField(default=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
