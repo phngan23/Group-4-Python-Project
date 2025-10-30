@@ -1,20 +1,36 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Bảng điều khiển Thống kê</h1>
 
-<div style="max-width: 700px; margin-bottom: 30px;">
-    <h2>Thời gian học theo ngày</h2>
+<div class="task-summary" style="margin-bottom: 20px;">
+    <h2>Tỷ lệ hoàn thành công việc</h2>
+    <h3 style="color: #4CAF50;">{{ task_data.rate }}%</h3>
+    <p>({{ task_data.data.0 }} đã hoàn thành / {{ task_data.data.0|add:task_data.data.1 }} tổng số)</p>
+</div>
+
+<hr>
+
+<div style="max-width: 800px; margin-bottom: 40px;">
+    <h2>Thời gian học theo ngày (30 ngày qua)</h2>
     <canvas id="studyChart"></canvas>
 </div>
 
-<div style="display: flex; justify-content: space-around;">
-    <div style="max-width: 350px;">
-        <h2>Phân bổ môn học</h2>
+<div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+    
+    <div style="max-width: 350px; margin-bottom: 30px;">
+        <h2>Phân bổ môn học (tính theo giờ)</h2>
         <canvas id="subjectChart"></canvas>
     </div>
     
-    <div style="max-width: 350px;">
-        <h2>Biểu đồ cảm xúc</h2>
+    <div style="max-width: 350px; margin-bottom: 30px;">
+        <h2>Thống kê cảm xúc</h2>
         <canvas id="emotionChart"></canvas>
+    </div>
+
+    <div style="max-width: 350px; margin-bottom: 30px;">
+        <h2>Tỷ lệ công việc</h2>
+        <canvas id="taskChart"></canvas>
     </div>
 </div>
 
@@ -22,67 +38,75 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // 2.1. Lấy dữ liệu từ context Django đã render
-    // Đây chính là dòng code trong ảnh của bạn: const data = {{ ...|safe }};
-    // Dùng |safe là BẮT BUỘC để Django không "escape" các dấu ngoặc kép.
+    // 2.1. Lấy dữ liệu JSON từ context Django
     const studyData = {{ study_data_json|safe }};
     const subjectData = {{ subject_data_json|safe }};
     const emotionData = {{ emotion_data_json|safe }};
+    const taskData = {{ task_data_json|safe }};
 
-    // 2.2. Vẽ Biểu đồ 1: Thời gian học (Bar Chart)
+    // 2.2. Biểu đồ 1: Thời gian học (Bar Chart)
     const ctxStudy = document.getElementById('studyChart').getContext('2d');
     new Chart(ctxStudy, {
-        type: 'bar', // Loại biểu đồ
+        type: 'bar',
         data: {
-            labels: studyData.labels, // Nhãn trục X (các ngày)
+            labels: studyData.labels,
             datasets: [{
                 label: 'Số phút đã học',
-                data: studyData.data, // Dữ liệu trục Y (số phút)
+                data: studyData.data,
                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
             }]
         },
-        options: {
-            scales: { y: { beginAtZero: true } }
-        }
+        options: { scales: { y: { beginAtZero: true } } }
     });
 
-    // 2.3. Vẽ Biểu đồ 2: Môn học (Pie Chart)
+    // 2.3. Biểu đồ 2: Môn học (Pie Chart)
     const ctxSubject = document.getElementById('subjectChart').getContext('2d');
     new Chart(ctxSubject, {
-        type: 'pie', // Loại biểu đồ
+        type: 'pie',
         data: {
-            labels: subjectData.labels, // Tên các môn học
+            labels: subjectData.labels,
             datasets: [{
-                data: subjectData.data, // Dữ liệu (số phút)
-                backgroundColor: [ // Tự động thêm màu cho đẹp
-                    'rgba(255, 99, 132, 0.7)',
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                    'rgba(75, 192, 192, 0.7)',
-                    'rgba(153, 102, 255, 0.7)',
-                ],
+                data: subjectData.data,
+                // Dùng màu sắc từ database của bạn!
+                backgroundColor: subjectData.colors, 
             }]
         }
     });
 
-    // 2.4. Vẽ Biểu đồ 3: Cảm xúc (Doughnut Chart - tương tự Pie)
+    // 2.4. Biểu đồ 3: Cảm xúc (Doughnut Chart)
     const ctxEmotion = document.getElementById('emotionChart').getContext('2d');
     new Chart(ctxEmotion, {
-        type: 'doughnut', // Loại biểu đồ
+        type: 'doughnut',
         data: {
-            labels: emotionData.labels, // Các loại cảm xúc
+            labels: emotionData.labels, // Nhãn đã có icon (ví dụ: '😊 Happy')
             datasets: [{
-                data: emotionData.data, // Số lần xuất hiện
-                backgroundColor: [
+                data: emotionData.data,
+                backgroundColor: [ // Thêm màu mặc định
                     'rgba(75, 192, 192, 0.7)',
-                    'rgba(255, 99, 132, 0.7)',
                     'rgba(255, 206, 86, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(201, 203, 207, 0.7)'
                 ],
             }]
         }
     });
 
+    // 2.5. Biểu đồ 4: Tỷ lệ công việc (Pie Chart)
+    const ctxTask = document.getElementById('taskChart').getContext('2d');
+    new Chart(ctxTask, {
+        type: 'pie',
+        data: {
+            labels: taskData.labels, // ['Hoàn thành', 'Chưa hoàn thành']
+            datasets: [{
+                data: taskData.data,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.7)', // Màu xanh cho 'Hoàn thành'
+                    'rgba(255, 99, 132, 0.7)'  // Màu đỏ cho 'Chưa hoàn thành'
+                ],
+            }]
+        }
+    });
 </script>
 
 {% endblock %}
