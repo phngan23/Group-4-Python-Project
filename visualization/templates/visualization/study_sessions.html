@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Session History{% endblock %}
+
+{% block content %}
+<div class="page active" id="study-sessions">
+    <h1 class="page-title">Study Session History</h1>
+    
+    <div class="navigation">
+        <a href="{% url 'visualization:study_stats' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Overview
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="session-filters">
+        <select id="time-filter" class="filter-select">
+            <option value="all">All Time</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+        </select>
+        <select id="subject-filter" class="filter-select">
+            <option value="all">All Subjects</option>
+            <option value="math">Mathematics</option>
+            <option value="science">Science</option>
+            <option value="history">History</option>
+        </select>
+    </div>
+
+    <!-- Sessions List -->
+    <div class="sessions-container" id="sessions-container">
+        <!-- Sessions will be loaded by JavaScript -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.navigation {
+    margin-bottom: 25px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    color: var(--secondary);
+    transform: translateX(-3px);
+}
+
+.session-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 10px 15px;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    background: white;
+    color: var(--dark);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--secondary);
+}
+
+.sessions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.session-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary);
+}
+
+.session-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.subject-name {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1.1em;
+}
+
+.session-date {
+    color: var(--gray);
+    font-size: 0.9em;
+}
+
+.session-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.duration {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.time-range {
+    color: var(--gray);
+    font-size: 0.9em;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.empty-state i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .session-filters {
+        flex-direction: column;
+    }
+    
+    .session-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .session-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+.error {
+    color: var(--danger) !important;
+}
+
+.error i {
+    color: var(--danger) !important;
+}
+
+.session-notes {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: var(--gray);
+    border-left: 3px solid var(--primary);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/study_sessions.js' %}"></script>
+{% endblock %}

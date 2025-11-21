@@ -1,26 +1,62 @@
 # === Study Habit Tracker dependencies ===
 
-Django>=5.0,<6.0 # main framework
+# Core Django
+Django>=5.0,<6.0
 python-decouple>=3.8
 pytz
 sqlparse
 asgiref
-requests
-Pillow
-django-crispy-forms 
-crispy-bootstrap5
-django-extensions
-# ----- Visualiztion
-matplotlib
-pandas
-numpy
-# -----
-scikit-learn # machine learning
-django-cors-headers
-whitenoise
-gunicorn
+
+# HTTP & APIs
+requests>=2.31.0
+
+# Image processing
+Pillow>=10.0.0
+
+# Forms & UI
+django-crispy-forms>=2.0
+crispy-bootstrap5>=2023.0
+
+# Development & Extensions
+django-extensions>=3.2.0
+
+# ----- Visualization & Data -----
+matplotlib>=3.7.0
+pandas>=2.0.0
+numpy>=1.24.0
+seaborn>=0.12.0
+
+# ----- Machine Learning -----
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# ----- CORS & Deployment -----
+django-cors-headers>=4.0.0
+whitenoise>=6.0.0
+gunicorn>=21.0.0
+
+# === Music & Spotify Integration ===
+spotipy>=2.23.0
+python-dotenv>=1.0.0
+
+# === Database (optional) ===
+psycopg2-binary>=2.9.0  # PostgreSQL support
 
 # === Optional Dev Tools ===
-black
-flake8
-autopep8
+black>=23.0.0
+flake8>=6.0.0
+autopep8>=2.0.0
+django-debug-toolbar>=4.0.0
+
+# === Additional for Todo ML Features ===
+threadpoolctl>=3.0.0  # For scikit-learn compatibility
+scipy>=1.10.0  # Scientific computing
+
+# === Email & Notifications ===
+# For background tasks
+celery>=5.3.0
+redis>=4.5.0  # Celery broker
+
+# === Security ===
+bcrypt>=4.0.0  # Password hashing
+django-axes>=6.0.0  # Security monitoring

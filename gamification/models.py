@@ -32,6 +32,9 @@ class Character(models.Model):
     # Danh sách các câu nói động viên (dạng JSON)
     motivation_quotes = models.JSONField(default=list)
 
+    # Character mặc định unlock khi có account
+    emoji = models.CharField(max_length=5, default="🐰")
+
     def __str__(self):
         '''Hiển thị tên nhân vật trong admin'''
         return f"{self.name} ({self.get_rarity_display()})"

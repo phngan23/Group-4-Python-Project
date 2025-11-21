@@ -1,0 +1,218 @@
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+        padding: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-right {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .characters-grid {
+        flex-direction: column;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 20px;
+    }
+
+    .character-card {
+        padding: 15px;
+        max-width: 150px;
+    }
+    
+    .character-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 30px;
+    }
+    
+    .character-name {
+        font-size: 14px;
+    }
+    
+    .mood-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .music-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .mascot {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+    
+    .modal-character {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+    }
+
+    .pomodoro-top-section {
+        flex-direction: column; /* Xếp dọc khi màn hình nhỏ */
+        gap: 20px;
+    }
+
+    .pomodoro-character-area {
+        width: 180px; /* Thu nhỏ nhân vật trên điện thoại */
+        height: 180px;
+        order: -1; /* Đẩy nhân vật lên trên đồng hồ (tuỳ chọn) */
+    }
+
+    .timer-display {
+        font-size: 48px; /* Giảm cỡ chữ đồng hồ trên mobile */
+    }
+
+    .coin-display {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .unlock-modal-content {
+        padding: 20px;
+    }
+    
+    .unlock-actions {
+        flex-direction: column;
+    }
+    
+    .confirm-unlock-btn, .cancel-unlock-btn {
+        width: 100%;
+    }
+
+    .preset-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .timer-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .timer-controls .timer-btn {
+        width: 200px;
+    }
+    
+    .confirmation-modal .modal-content {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+}
+
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 50px;
+    }
+    
+    .main-content {
+        margin-left: 50px;
+        padding: 10px;
+    }
+    
+    .nav-item {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .nav-item i {
+        font-size: 16px;
+    }
+    
+    .welcome-card, .task-list, .task-manager {
+        padding: 20px;
+    }
+    
+    .timer-display {
+        font-size: 36px;
+    }
+    
+    .timer-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .timer-btn {
+        width: 100%;
+    }
+
+    .characters-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .character-card {
+        max-width: 140px;
+    }
+
+    .coin-display {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .coin-icon {
+        font-size: 16px;
+    }
+    
+    #coinCount {
+        font-size: 16px;
+    }
+    
+    .achievement-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        transform: translateY(-150%);
+    }
+    
+    .achievement-notification.show {
+        transform: translateY(0);
+    }
+
+    .time-presets {
+        padding: 15px;
+    }
+    
+    .preset-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .custom-time input {
+        width: 120px;
+    }
+    
+    .confirmation-actions {
+        gap: 8px;
+    }
+    
+    .confirm-btn, .cancel-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}

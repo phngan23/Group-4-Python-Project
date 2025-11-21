@@ -12,10 +12,22 @@ Người dùng có thể:
 - Tạo danh sách việc cần làm (to-do-list) và nhận email nhắc deadline  
 - Xem biểu đồ học tập và cảm xúc theo ngày/tuần/tháng  
 - Tích điểm để mua nhân vật ảo (gamification)  
-- Ghi lại cảm xúc sau mỗi buổi học để tự đánh giá tiến bộ  
+- Ghi lại cảm xúc sau mỗi buổi học để tự đánh giá tiến bộ
+- Được đề xuất lộ trình học khi sắp đến kì thi (Machine Learning)
+
+## 2. Thành viên tham gia
+
+| Tên | MSV | App phụ trách chính | Đóng góp |
+|------|-------|-------------------|-----------|
+| **Nguyễn Phương Ngân** | 11245914 | study | 100% |
+| Đỗ Phạm Hà Chi | 11245851 | accounts | 100% |
+| Lê Thùy Dương | 11245864 | emotion | 100% |
+| Trần Khánh Linh | 11245897 | todo | 100% |
+| Chu Bá Thông | 11245935 | visualization | 100% |
+| Đinh Nguyễn Anh Thư | 11245936 | gamification | 100% |
 
 
-## 2. Công nghệ sử dụng
+## 3. Công nghệ sử dụng
 
 | Thành phần | Công nghệ |
 |-------------|-----------|
@@ -28,7 +40,7 @@ Người dùng có thể:
 | **Môi trường** | Virtualenv (.venv) |
 
 
-## 3. Hướng dẫn cài đặt 
+## 4. Hướng dẫn cài đặt 
 
 ### Bước 1: Clone repo
 ```bash
@@ -59,9 +71,13 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 ```
-### Bước 5: Chạy server
+### Bước 5: Seed data (nhân vật, shop…)
+```bash
+python manage.py seed_characters
+```
+### Bước 6: Chạy server
 ```bash
 python manage.py runserver
 ```
-Truy cập http://127.0.0.1:8000/, nếu hiện ra màn hình trắng với dòng "Let's start studying!" là đã thành công.
+### Bước 6: Truy cập http://127.0.0.1:8000/
 

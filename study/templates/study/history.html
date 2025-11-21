@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Study History{% endblock %}
+
+{% block content %}
+<div class="page active" id="history-page">
+    <h1 class="page-title">Study History</h1>
+
+    <!-- Return Button -->
+    <a href="{% url 'study:timer' %}" class="back-btn">
+        ← Back to Timer
+    </a>
+
+    {% if history %}
+        {% for day in history %}
+            <div class="history-day">
+                <h2 class="date-title">{{ day.date|date:"l, d/m/Y" }}</h2>
+
+                <table>
+                <thead>
+                    <tr>
+                    <th>Subject</th><th>Start</th><th>End</th><th>Duration</th><th>Coins</th><th>Mood</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in day.sessions %}
+                    <tr>
+                    <td>{{ s.subject_name }}</td>
+                    <td>{{ s.start_time|date:"H:i" }}</td>
+                    <td>
+                        {% if s.end_time %}
+                        {{ s.end_time|date:"H:i" }}
+                        {% else %}
+                        <i>Running...</i>
+                        {% endif %}
+                    </td>
+                    <td>{{ s.duration_text }}</td>
+                    <td>{{ s.points }}</td>
+                    <td>{{ s.emotion }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty">
+            <img src="{% static 'img/empty.png' %}" alt="">
+            <p>No study sessions yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    #history-page {
+        padding: 20px;
+        animation: fadeIn .4s ease;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+        color: var(--secondary);
+        transform: translateX(-3px);
+    }
+
+    .history-day {
+        margin-bottom: 40px;
+    }
+
+    .date-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+    }
+
+    .date-title .dot {
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    thead {
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    th {
+        padding: 14px 12px;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: left;
+        letter-spacing: .3px;
+    }
+
+    tbody tr {
+        transition: 0.25s ease;
+    }
+
+    tbody tr:hover {
+        background: rgba(108, 99, 255, 0.08); /* tím nhạt hover */
+    }
+
+    td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #ececec;
+        font-size: 14px;
+        color: #444;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Subject name highlight */
+    td:first-child {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    /* Running label */
+    td i {
+        color: var(--accent);
+        font-style: normal;
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    .empty {
+        text-align: center;
+        opacity: .7;
+        padding-top: 40px;
+    }
+
+    .empty img {
+        width: 160px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}

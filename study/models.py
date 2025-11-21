@@ -42,7 +42,7 @@ class StudySession(models.Model):
     # Tổng thời gian học (tính bằng giây)
     duration_seconds = models.PositiveIntegerField(default=0)
     # Số xu thưởng sau buổi học
-    points_awards = models.IntegerField(default=0)
+    points_awarded = models.IntegerField(default=0)
     # Trạng thái buổi học (đang học hay đã dừng)
     is_active = models.BooleanField(default=True)
 
@@ -89,9 +89,9 @@ class StudySession(models.Model):
         self.save(update_fields=['end_time', 'is_active', 'duration_seconds', 'points_awarded'])
     
     def calculate_points(self):
-        '''Tính điểm thưởng dựa trên thời gian học (1 giờ = 10 xu)'''
+        '''Tính điểm thưởng dựa trên thời gian học (1 giờ = 25 xu)'''
         hours = self.duration_seconds / 3600
-        points = int(hours * 10)  
+        points = int(hours * 25)  
         return points
     
     def save(self, *args, **kwargs):

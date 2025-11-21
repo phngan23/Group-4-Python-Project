@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <!-- Home Page -->
+        <div class="page active" id="home">
+            
+            <div class="welcome-card">
+                <h2>Welcome to Study Tracker!</h2>
+                <p>Track your study sessions, manage tasks, and improve your productivity.</p>
+            </div>
+
+            <div class="stats-grid">
+
+                <!-- Study Time -->
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-value">{{ today_study_time }}</div>
+                    <div class="stat-label">Today's Study Time</div>
+                </div>
+
+                <!-- Streak -->
+                <div class="stat-card">
+                    <i class="fas fa-fire"></i>
+                    <div class="stat-value">{{ study_streak }}</div>
+                    <div class="stat-label">Study Streak</div>
+                </div>
+
+                <!-- Tasks Completed -->
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="stat-value">{{ tasks_completed }}/{{ total_tasks }}</div>
+                    <div class="stat-label">Tasks Completed</div>
+                    
+                    <div class="progress-ring" id="taskProgressRing">
+                        <div class="progress-ring-inner" id="taskProgressPercent">{{ tasks_percent }}%</div>
+                    </div>
+                </div>
+
+                <!-- Emotion -->
+                <div class="stat-card">
+                    <i class="fas fa-smile"></i>
+                    <div class="stat-value">{{ last_emotion }}</div>
+                    <div class="stat-label">Current Mood</div>
+                </div>
+            </div>
+            
+            <!-- Today's Tasks -->
+            <div class="task-list">
+                <h3>Today's Tasks</h3>
+                <div id="tasks-container">
+                    <!-- Tasks will be loaded here by JavaScript -->
+                </div>
+            </div>
+
+            <!--
+                <div id="tasks-container">
+                    <!-- Tasks will be loaded here by JavaScript >
+                    {% for task in tasks %}
+                    <div class="task-item">
+                        <input type="checkbox" {% if task.completed %}checked{% endif %}>
+                        <span class="{% if task.completed %}completed{% endif %}">
+                            {{ task.title }}
+                        </span>
+                    </div>
+                    {% empty %}
+                    <p>No tasks today.</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="add-task">
+                    <input type="text" id="new-task-input" placeholder="Add a new task...">
+                    <button id="add-task-btn"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            -->
+        </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/home_tasks.js' %}"></script>
+{% endblock %}

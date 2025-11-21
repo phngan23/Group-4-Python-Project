@@ -222,7 +222,6 @@ local_settings.py
 .env.*
 *.secret
 *.key
-*.json
 
 # Logs
 *.log

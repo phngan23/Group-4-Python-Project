@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'todo',
     'visualization',
     'gamification',
+    'frontend',
+    'music'
 ]
 
 MIDDLEWARE = [
@@ -61,10 +63,11 @@ ROOT_URLCONF = 'studyhabit.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -120,11 +123,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_TZ = True
+
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -136,3 +139,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]
+
+# Spotify Configuration
+SPOTIFY_CLIENT_ID = '881dc591e52947a2832feb4b12ea9056'
+SPOTIFY_CLIENT_SECRET = 'e23b999727d14d4585d0d31d7d81bcd8' 
+SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:8000/music/spotify-callback/'
+
+# Để lấy credentials, truy cập: https://developer.spotify.com/dashboard
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop{% endblock %}
+
+{% block content %}
+
+<div class="page active" id="shop">
+
+    <div class="game-header">
+        <h2>Greetings, <span class="username">{{ request.user.username }}</span></h2>
+        <p>Unlock your character</p>
+    </div>
+
+    <div class="characters-grid" id="characters-grid">
+        <!-- JavaScript will insert character cards here -->
+    </div>
+
+
+    <!-- Modal: Unlocked Character -->
+    <div class="character-modal" id="character-modal">
+        <div class="modal-content">
+            <div class="modal-character-display">
+                <div class="modal-character-avatar">
+                    <img id="modal-character-img" src="" alt="">
+                    <div class="character-emoji" id="modal-character-emoji"></div>
+                </div>
+            </div>
+            <div class="modal-text-content">
+                <h3>Congratulations!</h3>
+                <p class="unlock-message" id="modal-unlock-message"></p>
+                <div class="divider"></div>
+                <div class="character-greeting" id="modal-character-greeting"></div>
+            </div>
+            <button class="close-modal-btn" id="close-unlocked-modal">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal: Locked Characters -->
+        <div class="locked-modal" id="locked-modal">
+          <div class="modal-content">
+            <div class="modal-character-display">
+              <div class="locked-icon">🔒</div>
+            </div>
+            <div class="modal-text-content">
+              <h3>Sorry!</h3>
+              <p class="locked-message">This character is locked.</p>
+            </div>
+            <button class="close-modal-btn" id="close-locked-modal">OK</button>
+          </div>
+        </div>
+
+    <!-- Modal: Confirm Unlock -->
+    <div class="unlock-modal" id="unlock-modal">
+        <div class="unlock-modal-content">
+            <div class="unlock-character-avatar">
+                <div class="character-emoji" id="unlock-character-emoji"></div>
+            </div>
+
+            <div class="modal-text-content">
+                <h3 id="unlock-character-name">Unlock Character</h3>
+                <p class="unlock-info">Do you want to unlock this character?</p>
+                <div class="unlock-price" id="unlock-price"></div>
+            </div>
+
+            <div class="unlock-actions">
+                <button class="confirm-unlock-btn" id="confirm-unlock">UNLOCK</button>
+                <button class="cancel-unlock-btn" id="cancel-unlock">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <!--script>
+        console.log("SHOP PAGE LOADED");
+    </script-->
+    <script src="{% static 'js/shop.js' %}"></script>
+{% endblock %}
