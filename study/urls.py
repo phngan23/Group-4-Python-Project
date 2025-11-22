@@ -18,5 +18,5 @@ urlpatterns = [
 
     # API: add subject
     path("api/add-subject/", views.api_add_subject, name="add_subject"),
-
+    
 ]

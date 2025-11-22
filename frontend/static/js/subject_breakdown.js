@@ -8,6 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSubjectBreakdown();
 });
 
+const DEFAULT_COLORS = [
+    '#6C63FF', // Tím (Purple)
+    '#FFA726', // Cam (Orange)
+    '#4CAF50', // Xanh lá (Green)
+    '#26C6DA', // Xanh ngọc (Cyan)
+    '#FF7043', // Đỏ cam (Deep Orange)
+    '#7E57C2', // Tím đậm (Deep Purple)
+    '#FFCA28', // Vàng (Amber)
+    '#EC407A', // Hồng (Pink)
+];
+
 function loadSubjectBreakdown() {
     console.log('Loading subject breakdown...');
     
@@ -43,8 +54,14 @@ function renderSubjectChart(subjects) {
     
     const labels = subjects.map(subject => subject.name);
     const data = subjects.map(subject => subject.total_minutes / 60); // Convert to hours
-    const backgroundColors = subjects.map(subject => subject.color || '#6C63FF'); // Fallback color
-    
+    const backgroundColors = subjects.map((subject, index) => {
+        // Nếu subject.color tồn tại và có giá trị, sử dụng nó.
+        if (subject.color) {
+            return subject.color;
+        }
+        // Ngược lại, sử dụng màu từ mảng mặc định, xoay vòng theo index.
+        return DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+    });
     console.log('Chart labels:', labels);
     console.log('Chart data:', data);
     console.log('Chart colors:', backgroundColors);
