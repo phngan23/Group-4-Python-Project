@@ -23,7 +23,14 @@ class MusicTrack(models.Model):
     )
 
     # File mp3 upload qua Django admin
-    audio_file = models.FileField(upload_to="music/tracks/")
+    audio_file = models.FileField(upload_to="music/tracks/", blank=True, null=True)
+
+    # Cho track mặc định - đường dẫn tới file trong static
+    static_audio_path = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Đường dẫn tới file audio trong static folder, ví dụ: music/default/track.mp3"
+    )
 
     # Hiển thị bìa: ưu tiên cover_image, nếu không có dùng color
     cover_color = models.CharField(
@@ -38,6 +45,7 @@ class MusicTrack(models.Model):
     )
 
     is_active = models.BooleanField(default=True)
+    is_default = models.BooleanField(default=False, help_text="Track mặc định cho mọi user")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -46,6 +54,15 @@ class MusicTrack(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def get_audio_url(self):
+        """Trả về URL audio - ưu tiên static path, sau đó mới tới uploaded file"""
+        if self.static_audio_path:
+            return f"/static/{self.static_audio_path}"
+        elif self.audio_file:
+            return self.audio_file.url
+        return ""
 
     @property
     def duration_seconds(self):

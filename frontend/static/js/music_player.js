@@ -1,42 +1,19 @@
-let tracks = [];
-let currentIndex = 0;
-let isPlaying = false;
-const audioPlayer = new Audio();
-let progressInterval = null;
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadTracks();
-    setupPlayerEvents();
-});
-
-async function loadTracks() {
-    const grid = document.getElementById("music-grid");
-    if (!grid) return;
-
-    grid.innerHTML = `<p>Loading tracks...</p>`;
-
-    try {
-        const res = await fetch("/music/api/tracks/");
-        const data = await res.json();
-
-        if (data.status !== "success") {
-            grid.innerHTML = `<p>Failed to load tracks.</p>`;
-            return;
-        }
-
-        tracks = data.tracks || [];
-
-        if (!tracks.length) {
-            grid.innerHTML = `<p>No tracks available yet. Please add some in Django admin.</p>`;
-            return;
-        }
-
-        renderTrackGrid();
-    } catch (err) {
-        console.error("Error loading tracks:", err);
-        grid.innerHTML = `<p>Error loading tracks.</p>`;
-    }
+// Tạo global music player nếu chưa có
+if (!window.globalMusicPlayer) {
+    window.globalMusicPlayer = {
+        audioPlayer: new Audio(),
+        isPlaying: false,
+        currentTrack: null,
+        tracks: [],
+        currentIndex: 0
+    };
 }
+
+const audioPlayer = window.globalMusicPlayer.audioPlayer;
+let tracks = window.globalMusicPlayer.tracks || [];
+let currentIndex = window.globalMusicPlayer.currentIndex || 0;
+let isPlaying = window.globalMusicPlayer.isPlaying || false;
+let progressInterval = null;
 
 function renderTrackGrid() {
     const grid = document.getElementById("music-grid");
@@ -83,6 +60,95 @@ function renderTrackGrid() {
     });
 }
 
+async function loadTracks() {
+    const grid = document.getElementById("music-grid");
+    if (!grid) return;
+
+    grid.innerHTML = `<p>Loading tracks...</p>`;
+
+    try {
+        const res = await fetch("/music/api/tracks/");
+        const data = await res.json();
+
+        if (data.status !== "success") {
+            grid.innerHTML = `<p>Failed to load tracks.</p>`;
+            return;
+        }
+
+        tracks = data.tracks || [];
+        
+        // Cập nhật global state
+        window.globalMusicPlayer.tracks = tracks;
+        window.globalMusicPlayer.currentIndex = currentIndex;
+
+        if (!tracks.length) {
+            grid.innerHTML = `<p>No tracks available yet. Please add some in Django admin.</p>`;
+            return;
+        }
+
+        renderTrackGrid();
+        
+        // Nếu đang có track phát, cập nhật UI
+        if (window.globalMusicPlayer.currentTrack && window.globalMusicPlayer.isPlaying) {
+            const savedIndex = tracks.findIndex(t => 
+                t.audio_url === window.globalMusicPlayer.currentTrack.audio_url
+            );
+            if (savedIndex !== -1) {
+                currentIndex = savedIndex;
+                window.globalMusicPlayer.currentIndex = savedIndex;
+                updateNowPlayingInfo(tracks[savedIndex]);
+                showNowPlaying();
+                updatePlayButton();
+            }
+        }
+    } catch (err) {
+        console.error("Error loading tracks:", err);
+        grid.innerHTML = `<p>Error loading tracks.</p>`;
+    }
+}
+
+function savePlayerState() {
+    const playerState = {
+        isPlaying: isPlaying,
+        currentIndex: currentIndex,
+        currentTime: audioPlayer.currentTime,
+        currentTrack: tracks[currentIndex] || null
+    };
+    sessionStorage.setItem('musicPlayerState', JSON.stringify(playerState));
+}
+
+function restorePlayerState() {
+    const savedState = sessionStorage.getItem('musicPlayerState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        
+        // Khôi phục global state
+        window.globalMusicPlayer.isPlaying = state.isPlaying;
+        window.globalMusicPlayer.currentTrack = state.currentTrack;
+        window.globalMusicPlayer.currentIndex = state.currentIndex;
+        
+        // Khôi phục local state
+        isPlaying = state.isPlaying;
+        currentIndex = state.currentIndex;
+        
+        // Nếu có track đang phát, tiếp tục phát
+        if (state.currentTrack && state.isPlaying) {
+            audioPlayer.src = state.currentTrack.audio_url;
+            audioPlayer.currentTime = state.currentTime || 0;
+            
+            // Chỉ play nếu đang ở trang music (có UI controls)
+            if (document.getElementById('now-playing')) {
+                updateNowPlayingInfo(state.currentTrack);
+                showNowPlaying();
+                playAudio();
+            } else {
+                // Nếu đang ở app khác, vẫn tiếp tục phát nhưng không hiển thị UI
+                audioPlayer.play().catch(console.error);
+            }
+        }
+    }
+}
+
 function startTrack(index) {
     if (!tracks.length || !tracks[index]) return;
 
@@ -97,9 +163,15 @@ function startTrack(index) {
     audioPlayer.src = track.audio_url;
     audioPlayer.load();
 
+    // Cập nhật global state
+    window.globalMusicPlayer.currentTrack = track;
+    window.globalMusicPlayer.currentIndex = index;
+    window.globalMusicPlayer.isPlaying = true;
+
     updateNowPlayingInfo(track);
     showNowPlaying();
     playAudio();
+    savePlayerState();
 }
 
 function showNowPlaying() {
@@ -156,6 +228,7 @@ function setupPlayerEvents() {
     audioPlayer.addEventListener("ended", playNextTrack);
     audioPlayer.addEventListener("timeupdate", updateProgress);
     audioPlayer.addEventListener("loadedmetadata", updateTotalTime);
+    audioPlayer.addEventListener("timeupdate", savePlayerState);
 }
 
 function playAudio() {
@@ -165,8 +238,10 @@ function playAudio() {
         .play()
         .then(() => {
             isPlaying = true;
+            window.globalMusicPlayer.isPlaying = true;
             updatePlayButton();
             startProgressTimer();
+            savePlayerState();
         })
         .catch((err) => {
             console.error("Error playing audio:", err);
@@ -177,8 +252,10 @@ function playAudio() {
 function pauseAudio() {
     audioPlayer.pause();
     isPlaying = false;
+    window.globalMusicPlayer.isPlaying = false;
     updatePlayButton();
     stopProgressTimer();
+    savePlayerState();
 }
 
 function togglePlayPause() {
@@ -204,9 +281,11 @@ function playNextTrack() {
     } else {
         // Hết playlist
         isPlaying = false;
+        window.globalMusicPlayer.isPlaying = false;
         updatePlayButton();
         stopProgressTimer();
         showNotification("Playlist finished.", "info");
+        savePlayerState();
     }
 }
 
@@ -291,6 +370,7 @@ function seekAudio(event) {
 
     audioPlayer.currentTime = ratio * audioPlayer.duration;
     updateProgress();
+    savePlayerState();
 }
 
 function formatTime(seconds) {
@@ -336,3 +416,17 @@ function showNotification(message, type = "info") {
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 2500);
 }
+
+// Lưu state khi rời trang
+window.addEventListener('beforeunload', savePlayerState);
+
+// Khởi động player khi trang load
+document.addEventListener("DOMContentLoaded", () => {
+    // Khôi phục state trước khi load tracks
+    restorePlayerState();
+    loadTracks();
+    setupPlayerEvents();
+});
+
+// Auto-save state mỗi 5 giây
+setInterval(savePlayerState, 5000);

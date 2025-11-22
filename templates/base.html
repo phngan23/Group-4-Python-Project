@@ -54,16 +54,6 @@
     <div class="main-content">
         <!-- Header-->
         <div class="header">
-            <!--
-            <div class="user-info">
-                <div class="avatar">{{ request.user.username|first|upper }}</div>
-                <div>
-                    <h2>Hello, {{ request.user.username }}!</h2>
-                    <p>Ready to study today?</p>
-                </div>
-            </div>
-            -->
-
             <div class="user-info">
                 {% if request.user.is_authenticated %}
                     <!-- Khi đã đăng nhập -->
@@ -130,8 +120,40 @@
     
     <!-- Scripts -->
     <script src="{% static 'js/app.js' %}"></script>
-    <!--script src="{% static 'js/pomodoro.js' %}"></script-->
-    <!--script src="{% static 'js/music_player.js' %}"></script-->
+    
+    <!-- Global Music Player Script - THÊM VÀO ĐÂY -->
+    <script>
+    // Khởi tạo global music player trên mọi page
+    if (!window.globalMusicPlayer) {
+        window.globalMusicPlayer = {
+            audioPlayer: new Audio(),
+            isPlaying: false,
+            currentTrack: null,
+            tracks: [],
+            currentIndex: 0
+        };
+    }
+
+    // Tự động khôi phục nhạc khi load bất kỳ page nào
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedState = sessionStorage.getItem('musicPlayerState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            if (state.currentTrack && state.isPlaying) {
+                const audio = window.globalMusicPlayer.audioPlayer;
+                audio.src = state.currentTrack.audio_url;
+                audio.currentTime = state.currentTime || 0;
+                audio.play().catch(console.error);
+                
+                // Cập nhật global state
+                window.globalMusicPlayer.isPlaying = true;
+                window.globalMusicPlayer.currentTrack = state.currentTrack;
+                window.globalMusicPlayer.currentIndex = state.currentIndex;
+            }
+        }
+    });
+    </script>
+
     {% block scripts %}{% endblock %}
 
 </body>
