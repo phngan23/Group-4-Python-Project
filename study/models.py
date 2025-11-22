@@ -2,14 +2,19 @@ from django.db import models
 from accounts.models import Profile # Import model Profile để liên kết người dùng
 from datetime import datetime, timedelta 
 from django.utils import timezone
+import random
 
+COLOR_PALETTE = [
+    '#6C63FF', '#FFA726', '#4CAF50', '#26C6DA', 
+    '#FF7043', '#7E57C2', '#FFCA28', '#EC407A',
+]
 # Model 1: Subject
 class Subject(models.Model):
     # Liên kết đến người dùng (mỗi người có thể học nhiều môn)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='subjects')
     # Tên môn học
     name = models.CharField(max_length=100)
-    color = models.CharField(max_length=7)  # Mã màu HEX cho môn học (dùng cho biểu đồ)
+    color = models.CharField(max_length=7, blank=True, null= True, default=None)  # Mã màu HEX cho môn học (dùng cho biểu đồ)
     # Mục tiêu thời gian học mỗi tuần (đơn vị: giờ)
     target_hour_per_week = models.FloatField(default=5.0)
     # Ngày tạo môn học
@@ -18,6 +23,16 @@ class Subject(models.Model):
     def __str__(self):
         # Khi in ra object, hiển thị tên môn học
         return self.name
+    
+    def save(self, *arg, **kwarg):
+        if not self.pk and not self.color:
+            try:
+                existing_subject_count = Subject.objects.filter(profile = self.profile).count()
+                color_index = existing_subject_count % len(COLOR_PALETTE)
+                self.color = COLOR_PALETTE[color_index]
+            except Exception:
+                self.color = '#6C63FF'
+        super().save(*arg, **kwarg)
     
     def total_hours_this_week(self):
         '''Tính tổng số giờ học trong tuần hiện tại cho môn học này'''
