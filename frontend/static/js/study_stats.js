@@ -4,14 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadStudyStats() {
+    console.log('Loading study stats...');
+    
     fetch('/visualization/api/stats/')
         .then(response => response.json())
         .then(data => {
+            console.log('API Response:', data);
             if (data.status === 'success') {
+                console.log('Stats data:', data.data);
                 updateStatsUI(data.data);
                 renderWeeklyChart(data.data.weekly_data);
                 renderRecentSessions(data.data.recent_sessions);
             } else {
+                console.error('API returned error:', data);
                 showError('Failed to load study statistics');
             }
         })
@@ -33,20 +38,34 @@ function updateStatsUI(stats) {
 let weeklyChart = null;
 
 function renderWeeklyChart(weeklyData) {
-    const ctx = document.getElementById('weeklyChart').getContext('2d');
+    console.log('Weekly data for chart:', weeklyData); // Debug
+    
+    const canvas = document.getElementById('weeklyChart');
+    if (!canvas) {
+        console.error('Weekly chart canvas not found!');
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
     
     const labels = weeklyData.map(day => day.day);
-    const data = weeklyData.map(day => Math.round(day.minutes / 60 * 10) / 10); // Convert to hours
+    const data = weeklyData.map(day => Math.round(day.minutes)); // Lấy số phút
     
-    if (weeklyChart) weeklyChart.destroy();
+    console.log('Chart labels:', labels);
+    console.log('Chart data:', data);
+    
+    // Destroy existing chart
+    if (weeklyChart) {
+        weeklyChart.destroy();
+    }
 
     weeklyChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Minutes',
-                data: minutes,
+                label: 'Study Time (minutes)',
+                data: data,
                 backgroundColor: '#6C63FF',
                 borderColor: '#4A44C6',
                 borderWidth: 2,
@@ -62,7 +81,7 @@ function renderWeeklyChart(weeklyData) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Hours'
+                        text: 'Minutes'
                     },
                     grid: {
                         color: 'rgba(0, 0, 0, 0.1)'
@@ -81,15 +100,17 @@ function renderWeeklyChart(weeklyData) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const hours = context.parsed.y;
-                            const minutes = Math.round(hours * 60);
-                            return `${hours.toFixed(1)} hours (${minutes} minutes)`;
+                            const minutes = context.parsed.y;
+                            const hours = (minutes / 60).toFixed(1);
+                            return `${minutes} minutes (${hours} hours)`;
                         }
                     }
                 }
             }
         }
     });
+    
+    console.log('Weekly chart rendered!');
 }
 
 // RECENT SESSIONS LIST

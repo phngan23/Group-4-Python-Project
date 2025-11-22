@@ -23,16 +23,21 @@ function setupEventListeners() {
 }
 
 function loadStudySessions() {
-    const url = `/studyhabit/api/sessions/?filter=${currentTimeFilter}&subject=${currentSubjectFilter}`;
+    // SỬA URL Ở ĐÂY:
+    const url = `/visualization/api/sessions/?filter=${currentTimeFilter}&subject=${currentSubjectFilter}`;
+    
+    console.log('Loading sessions from:', url);
     
     fetch(url)
         .then(response => response.json())
         .then(data => {
+            console.log('Sessions API response:', data);
             if (data.status === 'success') {
                 availableSubjects = data.subjects;
                 renderSessions(data.sessions);
                 updateSubjectFilterOptions();
             } else {
+                console.error('Sessions API error:', data);
                 showSessionsError('Failed to load study sessions');
             }
         })
@@ -65,7 +70,7 @@ function renderSessions(sessions) {
                 <span class="duration">${session.duration}</span>
                 <span class="time-range">${session.start_time} - ${session.end_time}</span>
             </div>
-            ${session.notes ? `<div class="session-notes">${session.notes}</div>` : ''}
+            <!-- XÓA PHẦN NOTES VÌ MODEL KHÔNG CÓ -->
         </div>
     `).join('');
 }
