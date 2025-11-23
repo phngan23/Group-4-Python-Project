@@ -168,8 +168,40 @@
     <!-- Scripts -->
     <script src="{% static 'js/app.js' %}"></script>
     <script src="{% static 'js/characters.js' %}"></script>
-    <!--script src="{% static 'js/pomodoro.js' %}"></script-->
-    <!--script src="{% static 'js/music_player.js' %}"></script-->
+    
+    <!-- Global Music Player Script -->
+    <script>
+    // Khởi tạo global music player trên mọi page
+    if (!window.globalMusicPlayer) {
+        window.globalMusicPlayer = {
+            audioPlayer: new Audio(),
+            isPlaying: false,
+            currentTrack: null,
+            tracks: [],
+            currentIndex: 0
+        };
+    }
+
+    // Tự động khôi phục nhạc khi load bất kỳ page nào
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedState = sessionStorage.getItem('musicPlayerState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            if (state.currentTrack && state.isPlaying) {
+                const audio = window.globalMusicPlayer.audioPlayer;
+                audio.src = state.currentTrack.audio_url;
+                audio.currentTime = state.currentTime || 0;
+                audio.play().catch(console.error);
+                
+                // Cập nhật global state
+                window.globalMusicPlayer.isPlaying = true;
+                window.globalMusicPlayer.currentTrack = state.currentTrack;
+                window.globalMusicPlayer.currentIndex = state.currentIndex;
+            }
+        }
+    });
+    </script>
+    
     {% block scripts %}{% endblock %}
   </body>
 </html>
