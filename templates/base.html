@@ -2,125 +2,172 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Study Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}" />
+
     {% block extra_css %}{% endblock %}
+  </head>
 
-</head>
-
-<body>
+  <body>
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-        </div>
+      <div class="logo">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
 
-        <a href="/" class="nav-item {% if active_page == 'home' %}active{% endif %}">
-            <i class="fas fa-home"></i>
-        </a>
+      <a
+        href="/"
+        class="nav-item {% if active_page == 'home' %}active{% endif %}"
+      >
+        <i class="fas fa-home"></i>
+      </a>
 
-        <a href="{% url 'study:timer' %}" class="nav-item {% if active_page == 'timer' %}active{% endif %}">
-            <i class="fas fa-clock"></i>
-        </a>
+      <a
+        href="{% url 'study:timer' %}"
+        class="nav-item {% if active_page == 'timer' %}active{% endif %}"
+      >
+        <i class="fas fa-clock"></i>
+      </a>
 
-        <a href="{% url 'gamification:shop' %}" class="nav-item {% if active_page == 'gamification' %}active{% endif %}">
-            <i class="fas fa-store"></i>
-        </a>
+      <a
+        href="{% url 'gamification:shop' %}"
+        class="nav-item {% if active_page == 'gamification' %}active{% endif %}"
+      >
+        <i class="fas fa-store"></i>
+      </a>
 
-        <a href="{% url 'visualization:study_stats' %}" class="nav-item {% if active_page == 'statistics' %}active{% endif %}">
-            <i class="fas fa-chart-bar"></i>
-        </a>
+      <a
+        href="{% url 'visualization:study_stats' %}"
+        class="nav-item {% if active_page == 'statistics' %}active{% endif %}"
+      >
+        <i class="fas fa-chart-bar"></i>
+      </a>
 
-        <a href="{% url 'emotion:emotion_history' %}" class="nav-item {% if active_page == 'emotion' %}active{% endif %}">
-            <i class="fas fa-smile"></i>
-        </a>
+      <a
+        href="{% url 'emotion:emotion_history' %}"
+        class="nav-item {% if active_page == 'emotion' %}active{% endif %}"
+      >
+        <i class="fas fa-smile"></i>
+      </a>
 
-        <a href="/music/" class="nav-item {% if active_page == 'music' %}active{% endif %}">
-            <i class="fas fa-music"></i>
-        </a>
+      <a
+        href="/music/"
+        class="nav-item {% if active_page == 'music' %}active{% endif %}"
+      >
+        <i class="fas fa-music"></i>
+      </a>
 
-        <a href="{% url 'todo:todo_list' %}" class="nav-item {% if active_page == 'todo' %}active{% endif %}">
-            <i class="fas fa-tasks"></i>
-        </a>
+      <a
+        href="{% url 'todo:todo_list' %}"
+        class="nav-item {% if active_page == 'todo' %}active{% endif %}"
+      >
+        <i class="fas fa-tasks"></i>
+      </a>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header-->
-        <div class="header">
-            <div class="user-info">
-                {% if request.user.is_authenticated %}
-                    <!-- Khi đã đăng nhập -->
-                    <div class="avatar">{{ request.user.username|first|upper }}</div>
-                    <div>
-                        <h2>Hello, {{ request.user.username }}!</h2>
-                        <p>Ready to study today?</p>
-                    </div>
-                {% else %}
-                    <!-- Khi chưa đăng nhập -->
-                    <div>
-                        <h2>Welcome!</h2>
-                        <p>Please log in to start tracking.</p>
-                    </div>
-                {% endif %}
-            </div>
+      <!-- Header-->
+      <div class="header">
 
-            <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
-                <div class="date-display">
-                    <p id="current-date">Thursday, November 13, 2025</p>
-                </div>
-
-                <!-- Phần hiển thị xu nếu đã đăng nhập-->
-                {% if request.user.is_authenticated %}
-                    <div class="auth-buttons" style="display: flex; gap: 15px; align-items: center;">
-                        <a href="{% url 'logout' %}" class="btn-login"
-                            style="font-weight: bold;">Đăng xuất
-                        </a>
-
-                    </div>
-
-                    <div class="coin-display">
-                        <span class="coin-icon">💰</span>
-                        <span id="coinCount">{{ request.user.profile.coins }}</span> Coins
-                    </div>
-                
-                {% else %}
-                    <!-- Hiển thị Login + Register -->
-                    <div class="auth-buttons" style="display: flex; gap: 15px; align-items: center;">
-                        <a href="{% url 'login' %}" class="btn-login"
-                            style="font-weight: bold;">Đăng nhập
-                        </a>
-
-                        <a href="{% url 'register' %}" class="btn-register"
-                            style="font-weight: bold;">Đăng ký
-                        </a>
-                    </div>
-                {% endif %}
-
-            </div>
+        <div class="mini-clock-container" id="mini-clock-container" style="display: none;">
+          <div class="mini-clock">
+            <span class="mini-clock-icon">⏰</span>
+            <span class="mini-clock-time" id="mini-clock-time">25:00</span>
+            <span class="mini-clock-mode" id="mini-clock-mode">Study</span>
+          </div>
         </div>
 
-        <!-- Content here-->
-        {% block content %}
-        {% endblock %}
+        <div class="user-info">
+          {% if request.user.is_authenticated %}
+          <!-- Khi đã đăng nhập -->
+          <div class="avatar">{{ request.user.username|first|upper }}</div>
+          <div>
+            <h2>Hello, {{ request.user.username }}!</h2>
+            <p>Ready to study today?</p>
+          </div>
+          {% else %}
+          <!-- Khi chưa đăng nhập -->
+          <div>
+            <h2>Welcome!</h2>
+            <p>Please log in to start tracking.</p>
+          </div>
+          {% endif %}
+        </div>
 
+        <div
+          class="header-right"
+          style="display: flex; align-items: center; gap: 20px"
+        >
+          <div class="date-display">
+            <p id="current-date">Thursday, November 13, 2025</p>
+          </div>
+
+          <!-- Phần hiển thị xu nếu đã đăng nhập-->
+          {% if request.user.is_authenticated %}
+          <div
+            class="auth-buttons"
+            style="display: flex; gap: 15px; align-items: center"
+          >
+            <a
+              href="{% url 'logout' %}"
+              class="btn-login"
+              style="font-weight: bold"
+              >Đăng xuất
+            </a>
+          </div>
+
+          <div class="coin-display">
+            <span class="coin-icon">💰</span>
+            <span id="coinCount">{{ request.user.profile.coins }}</span> Coins
+          </div>
+
+          {% else %}
+          <!-- Hiển thị Login + Register -->
+          <div
+            class="auth-buttons"
+            style="display: flex; gap: 15px; align-items: center"
+          >
+            <a
+              href="{% url 'login' %}"
+              class="btn-login"
+              style="font-weight: bold"
+              >Đăng nhập
+            </a>
+
+            <a
+              href="{% url 'register' %}"
+              class="btn-register"
+              style="font-weight: bold"
+              >Đăng ký
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Content here-->
+      {% block content %} {% endblock %}
     </div>
     <!-- Decorative Elements -->
     <div class="sky"></div>
     <div class="cloud cloud-1"></div>
     <div class="cloud cloud-2"></div>
     <div class="grass"></div>
-    <div class="mascot">🐰</div>
-    
+    <div class="mascot"></div>
+
     <!-- Scripts -->
     <script src="{% static 'js/app.js' %}"></script>
-    
+    <script src="{% static 'js/characters.js' %}"></script>
+
     <!-- Global Music Player Script - THÊM VÀO ĐÂY -->
     <script>
     // Khởi tạo global music player trên mọi page
@@ -154,7 +201,85 @@
     });
     </script>
 
-    {% block scripts %}{% endblock %}
+    <script>
+    // Global Mini Clock Manager - CHẠY TRÊN TẤT CẢ TRANG
+      document.addEventListener('DOMContentLoaded', function() {
+          initializeGlobalMiniClock();
+      });
 
-</body>
+      function initializeGlobalMiniClock() {
+          let miniClockInterval = null;
+          
+          function updateMiniClock() {
+              try {
+                  const savedStateRaw = localStorage.getItem('pomodoroState');
+                  if (!savedStateRaw) {
+                      hideMiniClock();
+                      return;
+                  }
+                  
+                  const savedState = JSON.parse(savedStateRaw);
+                  const container = document.getElementById('mini-clock-container');
+                  const timeDisplay = document.getElementById('mini-clock-time');
+                  const modeDisplay = document.getElementById('mini-clock-mode');
+                  
+                  if (!container || !timeDisplay) return;
+                  
+                  // CHỈ HIỂN THỊ KHI TIMER ĐANG CHẠY THỰC SỰ
+                  if (savedState.isRunning && !savedState.isPaused) {
+                      container.style.display = 'block';
+                      
+                      // Tính thời gian thực tế
+                      const now = Date.now();
+                      const lastSaved = savedState.lastSavedTime || now;
+                      const elapsed = Math.floor((now - lastSaved) / 1000);
+                      const currentTimeLeft = Math.max(0, savedState.timeLeft - elapsed);
+                      
+                      // Cập nhật hiển thị
+                      const minutes = Math.floor(currentTimeLeft / 60);
+                      const seconds = currentTimeLeft % 60;
+                      timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                      
+                      if (modeDisplay) {
+                          const modeNames = {
+                              'pomodoro': 'Study',
+                              'shortBreak': 'Break', 
+                              'longBreak': 'Break'
+                          };
+                          modeDisplay.textContent = modeNames[savedState.currentMode] || 'Timer';
+                      }
+                      
+                      console.log("MiniClock updated:", { currentTimeLeft, elapsed, running: savedState.isRunning });
+                      
+                  } else {
+                      hideMiniClock();
+                  }
+              } catch (error) {
+                  console.error('Error updating mini clock:', error);
+                  hideMiniClock();
+              }
+          }
+          
+          function hideMiniClock() {
+              const container = document.getElementById('mini-clock-container');
+              if (container) {
+                  container.style.display = 'none';
+              }
+              if (miniClockInterval) {
+                  clearInterval(miniClockInterval);
+                  miniClockInterval = null;
+              }
+          }
+          
+          // Bắt đầu cập nhật mini clock
+          miniClockInterval = setInterval(updateMiniClock, 1000);
+          updateMiniClock(); // Chạy ngay lần đầu
+          
+          // Lưu interval để clear khi cần
+          window.miniClockInterval = miniClockInterval;
+      }
+    </script>
+    
+    {% block scripts %}{% endblock %}
+  </body>
 </html>

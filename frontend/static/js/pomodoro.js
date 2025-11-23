@@ -10,7 +10,11 @@ class PomodoroTimer {
         this.studiedSeconds = 0;
         this.targetMinutes = 25;
 
+        // QUAN TRỌNG: Thời gian học THỰC TẾ (không tính pause)
+        this.actualStudiedSeconds = 0;
+
         this.currentSessionId = null;
+        this.miniClockInterval = null; // Thêm biến quản lý mini clock
 
         this.modes = {
             pomodoro: { time: 25 * 60, name: "Study Time" },
@@ -21,13 +25,150 @@ class PomodoroTimer {
         this.init();
     }
 
+    // Thêm các hàm persistence
+    saveState() {
+        const state = {
+            isRunning: this.isRunning,
+            isPaused: this.isPaused,
+            currentMode: this.currentMode,
+            totalTime: this.totalTime,
+            timeLeft: this.timeLeft,
+            studiedSeconds: this.studiedSeconds,
+            actualStudiedSeconds: this.actualStudiedSeconds,
+            targetMinutes: this.targetMinutes,
+            currentSessionId: this.currentSessionId,
+            startTimestamp: this.startTimestamp, // Thời điểm bắt đầu thực tế
+            lastSavedTime: Date.now(), // Thời điểm lưu state
+            subjectId: document.getElementById('subjectSelect')?.value || ''
+        };
+        localStorage.setItem('pomodoroState', JSON.stringify(state));
+    }
+
+    loadState() {
+        const saved = localStorage.getItem('pomodoroState');
+        if (!saved) return null;
+        
+        try {
+            return JSON.parse(saved);
+        } catch (error) {
+            console.error('Error parsing saved state:', error);
+            return null;
+        }
+    }
+
+    clearState() {
+        localStorage.removeItem('pomodoroState');
+    }
+
+    // Tính toán thời gian đã trôi qua khi reload
+    calculateElapsedTime(savedState) {
+        if (!savedState.isRunning || savedState.isPaused) {
+            return 0;
+        }
+        
+        const now = Date.now();
+        const lastSaved = savedState.lastSavedTime;
+        const elapsedSeconds = Math.floor((now - lastSaved) / 1000);
+        
+        console.log("Elapsed time calculation:", {
+            now, lastSaved, elapsedSeconds, 
+            savedRunning: savedState.isRunning, 
+            savedPaused: savedState.isPaused
+        });
+
+        return elapsedSeconds;
+    }
+
     /* ========== INIT & EVENTS ========== */
     init() {
         this.setupEventListeners();
+
+        // Load state từ localStorage
+        const savedState = this.loadState();
+        if (savedState) {
+            this.restoreFromSavedState(savedState);
+        } else {
+            this.updateDisplay();
+            this.updateSessionInfo();
+            this.updateTargetTime();
+        }
+        
+        // Start global timer cho mini clock
+        this.startGlobalTimer();
+        
+        console.log("Pomodoro Timer initialized with persistence");
+    }
+
+    restoreFromSavedState(savedState) {
+        console.log("🔁 Restoring from saved state:", savedState);
+        
+        this.isRunning = savedState.isRunning;
+        this.isPaused = savedState.isPaused;
+        this.currentMode = savedState.currentMode;
+        this.totalTime = savedState.totalTime;
+        this.studiedSeconds = savedState.studiedSeconds || 0;
+        this.actualStudiedSeconds = savedState.actualStudiedSeconds || 0;
+        this.targetMinutes = savedState.targetMinutes;
+        this.currentSessionId = savedState.currentSessionId;
+        this.startTimestamp = savedState.startTimestamp;
+
+        // QUAN TRỌNG: Tính thời gian còn lại thực tế
+        const elapsed = this.calculateElapsedTime(savedState);
+        this.timeLeft = Math.max(0, savedState.timeLeft - elapsed);
+        
+        console.log("⏰ Time calculation:", {
+            savedTimeLeft: savedState.timeLeft,
+            elapsed: elapsed,
+            newTimeLeft: this.timeLeft
+        });
+
+        // Nếu hết giờ thì hoàn thành session
+        if (this.timeLeft <= 0) {
+            console.log("⏰ Time's up during restore");
+            this.timeLeft = 0;
+            this.complete();
+            return;
+        }
+
+        // QUAN TRỌNG: Nếu timer đang chạy, KHỞI ĐỘNG LẠI TIMER
+        if (this.isRunning && !this.isPaused) {
+            console.log("▶️ Restarting timer after restore");
+            // Đặt lại trạng thái trước khi start
+            this.isRunning = false;
+            this.isPaused = false;
+            
+            // Clear any existing interval
+            if (this.interval) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+            
+            // Khởi động timer
+            this.startTimer();
+        }
+
+        // KHÔI PHỤC SUBJECT SELECT
+        if (savedState.subjectId) {
+            const subjectSelect = document.getElementById('subjectSelect');
+            if (subjectSelect) {
+                setTimeout(() => {
+                    subjectSelect.value = savedState.subjectId;
+                    console.log("📚 Restored subject:", savedState.subjectId);
+                }, 100);
+            }
+        }
+
+        // Update UI
         this.updateDisplay();
         this.updateSessionInfo();
         this.updateTargetTime();
-        console.log("Pomodoro Timer initialized");
+        
+        // Update mode buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === this.currentMode);
+        });
+        
+        console.log("✅ Restore completed - running:", this.isRunning, "paused:", this.isPaused);
     }
 
     setupEventListeners() {
@@ -129,6 +270,7 @@ class PomodoroTimer {
         this.timeLeft = this.totalTime;
         this.targetMinutes = this.totalTime / 60;
         this.studiedSeconds = 0;
+        this.actualStudiedSeconds = 0;
 
         document.querySelectorAll(".mode-btn").forEach(btn => {
             btn.classList.toggle("active", btn.dataset.mode === mode);
@@ -158,22 +300,35 @@ class PomodoroTimer {
     startTimer() {
         const subjectSelect = document.getElementById("subjectSelect");
 
-        if (
-            this.currentMode === "pomodoro" &&
-            (!subjectSelect || !subjectSelect.value || subjectSelect.value === "new")
-        ) {
-            alert("Please select a subject before starting!");
-            return;
+        if (this.currentMode === 'pomodoro') {
+            const savedState = this.loadState();
+            const hasExistingSession = savedState && savedState.currentSessionId;
+            
+            // CHỈ kiểm tra subject cho session mới, không kiểm tra khi restore
+            if (!hasExistingSession && (!subjectSelect || !subjectSelect.value || subjectSelect.value === 'new')) {
+                alert('Please select a subject before starting!');
+                return;
+            }
         }
 
-        if (this.isRunning) return;
+        console.log("▶️ Starting timer - current running state:", this.isRunning);
+        
+        // QUAN TRỌNG: Clear interval cũ trước khi tạo mới
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
 
         this.isRunning = true;
         this.isPaused = false;
+        this.startTimestamp = Date.now();
 
         // Nếu là session học mới (pomodoro) và chưa có sessionId → gọi API start
         if (this.currentMode === "pomodoro" && !this.currentSessionId) {
+            console.log("🆕 Starting new study session");
             this.startStudySessionAPI();
+        } else {
+            console.log("🔁 Continuing existing session:", this.currentSessionId);
         }
 
         this.interval = setInterval(() => this.tick(), 1000);
@@ -184,11 +339,45 @@ class PomodoroTimer {
             toggleBtn.classList.add("running");
         }
 
+        // Lưu state
+        this.saveState();
+        
+        // Update global mini clock
+        this.updateGlobalMiniClock();
+
         this.updateTimerMessage(
             this.currentMode === "pomodoro"
                 ? "Focus on your studies! 🎯"
                 : "Enjoy your break! ☕"
         );
+        
+        console.log("✅ Timer started successfully - running:", this.isRunning, "paused:", this.isPaused);
+    }
+
+    // Thêm method này vào class PomodoroTimer
+    forceRestartTimer() {
+        console.log("🔄 Force restarting timer");
+        
+        // Clear mọi interval
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+        
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+            this.miniClockInterval = null;
+        }
+        
+        // Reset state
+        this.isRunning = false;
+        this.isPaused = false;
+        
+        // Load state mới nhất
+        const savedState = this.loadState();
+        if (savedState) {
+            this.restoreFromSavedState(savedState);
+        }
     }
 
     pauseTimer() {
@@ -198,11 +387,20 @@ class PomodoroTimer {
         this.isPaused = true;
         clearInterval(this.interval);
 
+        // Clear mini clock interval
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+            this.miniClockInterval = null;
+        }
+
         const toggleBtn = document.getElementById("toggle-btn");
         if (toggleBtn) {
             toggleBtn.textContent = "Start";
             toggleBtn.classList.remove("running");
         }
+
+        this.saveState();
+        this.updateGlobalMiniClock();
 
         this.updateTimerMessage("Timer paused");
     }
@@ -225,8 +423,15 @@ class PomodoroTimer {
         this.isPaused = false;
         clearInterval(this.interval);
 
+        // Clear mini clock interval
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+            this.miniClockInterval = null;
+        }
+
         this.timeLeft = this.totalTime;
         this.studiedSeconds = 0;
+        this.actualStudiedSeconds = 0; // RESET THỜI GIAN THỰC TẾ
         this.currentSessionId = null;
 
         const toggleBtn = document.getElementById("toggle-btn");
@@ -246,7 +451,9 @@ class PomodoroTimer {
             window.coinSystem.updateStudyProgress();
         }
 
+        this.clearState(); // Clear saved state
         this.updateDisplay();
+        this.updateGlobalMiniClock();
         this.updateTimerMessage("Timer reset");
     }
 
@@ -255,20 +462,54 @@ class PomodoroTimer {
         this._hardReset();
     }
 
+    complete() {
+        this.isRunning = false;
+        clearInterval(this.interval);
+
+        // Clear mini clock interval
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+            this.miniClockInterval = null;
+        }
+
+        const toggleBtn = document.getElementById('toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.textContent = 'Start';
+            toggleBtn.classList.remove('running');
+        }
+
+        if (this.currentMode === 'pomodoro') {
+            this.updateTimerMessage('Study session completed! 🎉');
+            // Auto-complete and reward coins
+            this.finishStudying();
+        } else {
+            this.updateTimerMessage('Break time is over!');
+            // Auto switch back to study mode
+            setTimeout(() => this.switchMode('pomodoro'), 2000);
+        }
+
+        console.log('Timer completed');
+    }
+
     /* ========== TICK & HOÀN THÀNH ========== */
 
     tick() {
+        console.log("Tick - timeLeft:", this.timeLeft, "running:", this.isRunning, "paused:", this.isPaused);
+
         if (this.timeLeft > 0) {
             this.timeLeft--;
 
             if (this.currentMode === "pomodoro") {
                 this.studiedSeconds++;
+                this.actualStudiedSeconds++; // CHỈ TĂNG KHI TIMER ĐANG CHẠY (không pause)
 
                 if (window.coinSystem) {
                     window.coinSystem.addStudyTime(1);
                 }
 
-                const progress = (this.studiedSeconds / this.totalTime) * 100;
+                // Update progress bar
+                //const progress = (this.studiedSeconds / this.totalTime) * 100;
+                const progress = (this.actualStudiedSeconds / this.totalTime) * 100;
                 const progressFill = document.getElementById("progress-fill");
                 const progressText = document.getElementById("progress-text");
 
@@ -276,13 +517,19 @@ class PomodoroTimer {
                     progressFill.style.width = progress + "%";
                 }
                 if (progressText) {
-                    progressText.textContent =
-                        Math.floor(this.studiedSeconds / 60) + " minutes";
+                    progressText.textContent = Math.floor(this.studiedSeconds / 60) + " minutes";
                 }
             }
 
             this.updateDisplay();
+
+            this.saveState();
+            
+            // Update global mini clock
+            this.updateGlobalMiniClock();
+
         } else {
+            console.log("Time's up! Completing session...");
             this.onTimeUp();
         }
     }
@@ -290,6 +537,12 @@ class PomodoroTimer {
     onTimeUp() {
         this.isRunning = false;
         clearInterval(this.interval);
+
+        // Clear mini clock interval
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+            this.miniClockInterval = null;
+        }
 
         const toggleBtn = document.getElementById("toggle-btn");
         if (toggleBtn) {
@@ -339,20 +592,29 @@ class PomodoroTimer {
         try {
             const res = await fetch("/study/api/stop/", {
                 method: "POST",
-                headers: { "X-CSRFToken": this.getCSRF() }
+                headers: { 
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRF() 
+                },
+                body: JSON.stringify({
+                    actual_study_seconds: this.actualStudiedSeconds // GỬI THỜI GIAN THỰC TẾ
+                })
             });
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+
             const data = await res.json();
             console.log("Stopped session:", data);
 
             this.currentSessionId = data.session_id;
-
-            const duration = Number(data.duration_seconds) || 0;
-            const minutes = Math.round(duration / 60);
+            const actualMinutes = Math.round(data.actual_study_seconds / 60);
             const points = Number(data.points_awarded) || 0;
 
             const summaryText = document.getElementById("study-summary-text");
             if (summaryText) {
-                summaryText.textContent = `You studied for ${minutes} minutes and earned ${points} coins!`;
+                summaryText.textContent = `You studied for ${actualMinutes} minutes and earned ${points} coins!`;
             }
 
             const emotionModal = document.getElementById("emotionModal");
@@ -363,6 +625,7 @@ class PomodoroTimer {
             this.updateTimerMessage("Session finished. Please record your mood.");
         } catch (err) {
             console.error("Error finishing study session:", err);
+            alert("Error finishing study session. Please try again.");
         }
     }
 
@@ -434,9 +697,77 @@ class PomodoroTimer {
 
             if (data.session_id) {
                 this.currentSessionId = data.session_id;
+                this.saveState(); // Lưu state với sessionId mới
             }
         } catch (err) {
             console.error("Error starting study session:", err);
+        }
+    }
+
+    // Mini Clock functions
+    startGlobalTimer() {
+        // Clear existing interval
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
+        }
+        
+        // Kiểm tra xem có timer đang chạy không
+        const savedState = this.loadState();
+        if (savedState && savedState.isRunning && !savedState.isPaused) {
+            this.updateGlobalMiniClock();
+            this.miniClockInterval = setInterval(() => this.updateGlobalMiniClock(), 1000);
+        } else {
+            this.updateGlobalMiniClock(); // Cập nhật để ẩn mini clock
+        }
+    }
+
+    updateGlobalMiniClock() {
+        const container = document.getElementById('mini-clock-container');
+        const timeDisplay = document.getElementById('mini-clock-time');
+        const modeDisplay = document.getElementById('mini-clock-mode');
+        
+        if (!container || !timeDisplay) return;
+        
+        const savedState = this.loadState();
+        
+        if (savedState && savedState.isRunning && !savedState.isPaused) {
+            // Hiển thị mini clock
+            container.style.display = 'block';
+            
+            // Tính thời gian còn lại thực tế
+            let currentTimeLeft = savedState.timeLeft;
+            if (savedState.isRunning && !savedState.isPaused) {
+                const elapsed = this.calculateElapsedTime(savedState);
+                currentTimeLeft = Math.max(0, savedState.timeLeft - elapsed);
+            }
+            
+            // Format time
+            const minutes = Math.floor(currentTimeLeft / 60);
+            const seconds = currentTimeLeft % 60;
+            timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Hiển thị mode
+            if (modeDisplay) {
+                const modeNames = {
+                    'pomodoro': 'Study',
+                    'shortBreak': 'Break', 
+                    'longBreak': 'Break'
+                };
+                modeDisplay.textContent = modeNames[savedState.currentMode] || 'Timer';
+            }
+        } else {
+            // Ẩn mini clock khi không có timer chạy
+            container.style.display = 'none';
+        }
+    }
+
+    // Cleanup method
+    destroy() {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        if (this.miniClockInterval) {
+            clearInterval(this.miniClockInterval);
         }
     }
 }
@@ -446,6 +777,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. Khởi tạo PomodoroTimer
     window.pomodoroTimer = new PomodoroTimer();
     console.log("Pomodoro Timer loaded");
+
+    // THÊM: Tự động fix lỗi timer sau 1 giây
+    setTimeout(() => {
+        const savedState = window.pomodoroTimer.loadState();
+        if (savedState && savedState.isRunning && !savedState.isPaused) {
+            console.log("🛠️ Auto-fixing timer state...");
+            window.pomodoroTimer.forceRestartTimer();
+        }
+    }, 1000);
 
     // 2. Load active character cho Pomodoro
     fetch("/shop/api/characters/")
@@ -481,7 +821,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 4. Subject modal như cũ
+    // 4. Subject modal
     function setupSubjectModal() {
         const subjectSelect = document.getElementById("subjectSelect");
         const modal = document.getElementById("subjectModal");

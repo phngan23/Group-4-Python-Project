@@ -19,4 +19,6 @@ urlpatterns = [
     # API: add subject
     path("api/add-subject/", views.api_add_subject, name="add_subject"),
     
+    # API: check session status
+    path('api/session-status/', views.api_get_session_status, name='api_session_status'),
 ]

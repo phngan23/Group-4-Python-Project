@@ -85,12 +85,12 @@ function renderSubjectChart(subjects) {
     if (subjectChart) {
         subjectChart.destroy();
     }
-    
+    /*
     const ctx = canvas.getContext('2d');
     const labels = subjects.map(subject => subject.name);
     const data = subjects.map(subject => (subject.total_minutes / 60).toFixed(1));
     const backgroundColors = subjects.map(subject => subject.color);
-    
+    */
     subjectChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
