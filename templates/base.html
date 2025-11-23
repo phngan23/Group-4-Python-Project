@@ -77,15 +77,14 @@
     <div class="main-content">
       <!-- Header-->
       <div class="header">
-        <!--
-            <div class="user-info">
-                <div class="avatar">{{ request.user.username|first|upper }}</div>
-                <div>
-                    <h2>Hello, {{ request.user.username }}!</h2>
-                    <p>Ready to study today?</p>
-                </div>
-            </div>
-            -->
+
+        <div class="mini-clock-container" id="mini-clock-container" style="display: none;">
+          <div class="mini-clock">
+            <span class="mini-clock-icon">⏰</span>
+            <span class="mini-clock-time" id="mini-clock-time">25:00</span>
+            <span class="mini-clock-mode" id="mini-clock-mode">Study</span>
+          </div>
+        </div>
 
         <div class="user-info">
           {% if request.user.is_authenticated %}
@@ -200,6 +199,85 @@
             }
         }
     });
+    </script>
+
+    <script>
+    // Global Mini Clock Manager - CHẠY TRÊN TẤT CẢ TRANG
+      document.addEventListener('DOMContentLoaded', function() {
+          initializeGlobalMiniClock();
+      });
+
+      function initializeGlobalMiniClock() {
+          let miniClockInterval = null;
+          
+          function updateMiniClock() {
+              try {
+                  const savedStateRaw = localStorage.getItem('pomodoroState');
+                  if (!savedStateRaw) {
+                      hideMiniClock();
+                      return;
+                  }
+                  
+                  const savedState = JSON.parse(savedStateRaw);
+                  const container = document.getElementById('mini-clock-container');
+                  const timeDisplay = document.getElementById('mini-clock-time');
+                  const modeDisplay = document.getElementById('mini-clock-mode');
+                  
+                  if (!container || !timeDisplay) return;
+                  
+                  // CHỈ HIỂN THỊ KHI TIMER ĐANG CHẠY THỰC SỰ
+                  if (savedState.isRunning && !savedState.isPaused) {
+                      container.style.display = 'block';
+                      
+                      // Tính thời gian thực tế
+                      const now = Date.now();
+                      const lastSaved = savedState.lastSavedTime || now;
+                      const elapsed = Math.floor((now - lastSaved) / 1000);
+                      const currentTimeLeft = Math.max(0, savedState.timeLeft - elapsed);
+                      
+                      // Cập nhật hiển thị
+                      const minutes = Math.floor(currentTimeLeft / 60);
+                      const seconds = currentTimeLeft % 60;
+                      timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                      
+                      if (modeDisplay) {
+                          const modeNames = {
+                              'pomodoro': 'Study',
+                              'shortBreak': 'Break', 
+                              'longBreak': 'Break'
+                          };
+                          modeDisplay.textContent = modeNames[savedState.currentMode] || 'Timer';
+                      }
+                      
+                      console.log("MiniClock updated:", { currentTimeLeft, elapsed, running: savedState.isRunning });
+                      
+                  } else {
+                      hideMiniClock();
+                  }
+              } catch (error) {
+                  console.error('Error updating mini clock:', error);
+                  hideMiniClock();
+              }
+          }
+          
+          function hideMiniClock() {
+              const container = document.getElementById('mini-clock-container');
+              if (container) {
+                  container.style.display = 'none';
+              }
+              if (miniClockInterval) {
+                  clearInterval(miniClockInterval);
+                  miniClockInterval = null;
+              }
+          }
+          
+          // Bắt đầu cập nhật mini clock
+          miniClockInterval = setInterval(updateMiniClock, 1000);
+          updateMiniClock(); // Chạy ngay lần đầu
+          
+          // Lưu interval để clear khi cần
+          window.miniClockInterval = miniClockInterval;
+      }
     </script>
     
     {% block scripts %}{% endblock %}

@@ -2162,3 +2162,42 @@ body {
   color: var(--gray);
   border-left: 3px solid var(--primary);
 }
+
+/* Mini Clock Styles */
+.mini-clock-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 2px solid var(--primary);
+    backdrop-filter: blur(10px);
+}
+
+.mini-clock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mini-clock-icon {
+    font-size: 16px;
+}
+
+.mini-clock-time {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.mini-clock-mode {
+    background: var(--primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}

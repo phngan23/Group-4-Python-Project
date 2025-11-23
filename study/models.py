@@ -53,6 +53,9 @@ class StudySession(models.Model):
     start_time = models.DateTimeField(default=timezone.now)
     pause_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
+
+    # THÊM FIELD MỚI: thời gian học THỰC TẾ (không tính pause)
+    actual_study_seconds = models.PositiveIntegerField(default=0)
     
     # Tổng thời gian học (tính bằng giây)
     duration_seconds = models.PositiveIntegerField(default=0)
@@ -95,18 +98,26 @@ class StudySession(models.Model):
         
         # Tính tổng thời gian học
         self.duration_seconds = int((self.end_time - self.start_time).total_seconds())
+        
+        # Sử dụng actual_study_seconds đã được cập nhật từ frontend
+        # (Frontend sẽ gửi actual_study_seconds qua API)
+        # Nếu chưa có, fallback về total_duration
+        if self.actual_study_seconds == 0:
+            self.actual_study_seconds = self.duration_seconds
+        
         # Tính điểm thưởng dựa trên thời gian học
-        self.points_awarded = self.calculate_points()
+        self.points_awarded = self.calculate_points_actual()
+
         # Cập nhật xu vào hồ sơ người dùng
         self.profile.coins += self.points_awarded
         self.profile.save(update_fields=['coins'])
         
-        self.save(update_fields=['end_time', 'is_active', 'duration_seconds', 'points_awarded'])
+        self.save(update_fields=['end_time', 'is_active', 'duration_seconds', 'actual_study_seconds', 'points_awarded'])
     
     def calculate_points(self):
-        '''Tính điểm thưởng dựa trên thời gian học (1 giờ = 25 xu)'''
-        hours = self.duration_seconds / 3600
-        points = int(hours * 25)  
+        '''Tính điểm thưởng dựa trên thời gian học thực tế (1 giờ = 30 xu)'''
+        hours = self.actual_study_seconds / 3600
+        points = int(hours * 30)  
         return points
     
     def save(self, *args, **kwargs):

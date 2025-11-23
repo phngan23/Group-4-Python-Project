@@ -116,6 +116,7 @@ def api_stop_session(request):
     API POST: /study/api/stop/
     - Tìm session đang active của user
     - Ghi end_time, tính duration_seconds, points_awarded, cập nhật profile.coins
+    - Nhận actual_study_seconds từ frontend
     - Trả về JSON chứa duration và points
     """
     profile = get_object_or_404(Profile, user=request.user)
@@ -127,37 +128,28 @@ def api_stop_session(request):
         # Không có session đang chạy
         return JsonResponse({'status': 'error', 'message': 'no_active_session'}, status=400)
 
-    # Nếu model StudySession đã có method stop() thì gọi; nếu không làm thủ công
     try:
-        # Nếu bạn đã implement method stop() trong model, dùng nó (nó sẽ tính duration và cộng coins)
-        stop_method = getattr(session, 'stop', None)
-        if callable(stop_method):
-            session.stop()  # method model tự handle save() và cập nhật profile nếu thiết kế như vậy
-            # Sau stop(), assume session.duration_seconds and session.points_awarded were set
-            return JsonResponse({
-                'status': 'stopped',
-                'session_id': session.id,
-                'duration_seconds': session.duration_seconds,
-                'points_awarded': session.points_awarded
-            })
-    except Exception:
-        # Nếu method stop có lỗi, fallback xuống xử lý thủ công
+        # Lấy actual_study_seconds từ frontend
+        data = json.loads(request.body.decode('utf-8'))
+        actual_study_seconds = data.get('actual_study_seconds', 0)
+ 
+    except: 
+        actual_study_seconds = 0
         pass
 
     # Xử lý dừng session thủ công (an toàn)
     session.end_time = timezone.now()
     session.duration_seconds = int((session.end_time - session.start_time).total_seconds())
-    # Tính điểm dựa trên phương thức calculate_points() (nếu có)
-    points = 0
-    if hasattr(session, 'calculate_points') and callable(getattr(session, 'calculate_points')):
-        try:
-            points = session.calculate_points()
-        except Exception:
-            points = int(session.duration_seconds / 360)  # fallback: 0.1 coin per second (ví dụ)
-    session.points_awarded = points
+    
+    # QUAN TRỌNG: Sử dụng thời gian THỰC TẾ từ frontend
+    session.actual_study_seconds = actual_study_seconds
+
+    # Tính điểm dựa trên thời gian THỰC TẾ
+    hours = session.actual_study_seconds / 3600
+    session.points_awarded = int(hours * 30)
 
     # Cập nhật xu vào Profile (nếu thiết kế model để update profile ở model thì chú ý không double-add)
-    profile.coins = getattr(profile, 'coins', 0) + points
+    profile.coins += session.points_awarded
     profile.save()
 
     # Lưu session
@@ -168,8 +160,25 @@ def api_stop_session(request):
         'status': 'stopped',
         'session_id': session.id,
         'duration_seconds': session.duration_seconds,
+        'actual_study_seconds': session.actual_study_seconds,  # Thời gian thực tế (không pause)
         'points_awarded': session.points_awarded
     })
+
+@login_required
+def api_get_session_status(request):
+    """API kiểm tra session đang active"""
+    profile = get_object_or_404(Profile, user=request.user)
+    session = StudySession.objects.filter(profile=profile, is_active=True).first()
+    
+    if session:
+        return JsonResponse({
+            'has_active_session': True,
+            'session_id': session.id,
+            'subject_id': session.subject.id if session.subject else None,
+            'start_time': session.start_time.isoformat()
+        })
+    else:
+        return JsonResponse({'has_active_session': False})
 
 # ============================
 # Xem lịch sử học
@@ -205,29 +214,26 @@ def study_history(request):
     for s in sessions:
         day = s.start_time.date()
         # đảm bảo có end_time/duration_seconds xử lý an toàn
+       
+        # SỬ DỤNG actual_study_seconds THAY VÌ duration_seconds
+        actual_seconds = getattr(s, "actual_study_seconds", 0)
+        if actual_seconds == 0:
+            # Fallback: nếu chưa có actual_study_seconds, dùng duration_seconds
+            actual_seconds = getattr(s, "duration_seconds", 0)
         
-        duration_seconds = getattr(s, "duration_seconds", None)
-        # If duration_seconds not set but end_time exists, compute
-
         emotion_entry = getattr(s, "emotion", None)
         if emotion_entry:
             mood_display = emotion_entry.get_emotion_display_icon()
         else:
             mood_display = "—"
-        
-        if (not duration_seconds or duration_seconds == 0) and s.end_time:
-            try:
-                duration_seconds = int((s.end_time - s.start_time).total_seconds())
-            except Exception:
-                duration_seconds = None
 
         history[day].append({
             "id": s.id,
             "subject_name": s.subject.name if s.subject else "—",
             "start_time": s.start_time,
             "end_time": s.end_time,
-            "duration_seconds": duration_seconds,
-            "duration_text": _format_duration(duration_seconds),
+            "duration_seconds": actual_seconds, # duration_seconds,
+            "duration_text": _format_duration(actual_seconds), # _format_duration(duration_seconds),
             "points": s.points_awarded,
             "emotion": mood_display,
         })

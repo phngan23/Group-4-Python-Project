@@ -142,12 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]
 
-# Spotify Configuration
-SPOTIFY_CLIENT_ID = '881dc591e52947a2832feb4b12ea9056'
-SPOTIFY_CLIENT_SECRET = 'e23b999727d14d4585d0d31d7d81bcd8' 
-SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:8000/music/spotify-callback/'
-
-# Để lấy credentials, truy cập: https://developer.spotify.com/dashboard
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
