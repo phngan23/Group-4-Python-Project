@@ -979,7 +979,7 @@ body {
 
 .mood-option:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px #ff00001a;
+  box-shadow: 0 10px 20px #0000001a;
 }
 
 .mood-option.selected {
@@ -1590,7 +1590,7 @@ body {
 
 /* 1. CỘT TRÁI: BIỂU ĐỒ TRÒN (KHUNG VUÔNG HƠN) */
 .chart-section {
-  flex: 0 0 450px; /* Cố định chiều rộng khoảng 400px (để tạo dáng vuông) */
+  flex: 0 0 450px; /* Cố định chiều rộng khoảng 450px (để tạo dáng vuông) */
   background: var(--gradient);
   border-radius: 20px;
   padding: 25px;
@@ -1603,7 +1603,7 @@ body {
   text-align: center;
 
   /* Chiều cao để ô này trông vuông vắn hơn */
-  min-height: 4px;
+  min-height: 300px;
 }
 
 .chart-section h3 {
