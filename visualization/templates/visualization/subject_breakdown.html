@@ -1,186 +1,31 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Subject Breakdown{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}Subject
+Breakdown{%endblock %} {% block content %}
 <div class="page active" id="subject-breakdown">
-    <h1 class="page-title">Subject Breakdown</h1>
-    
-    <div class="navigation">
-        <a href="{% url 'visualization:study_stats' %}" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Overview
-        </a>
-    </div>
+  <h1 class="page-title">Subject Breakdown</h1>
 
+  <div class="navigation">
+    <a href="{% url 'visualization:study_stats' %}" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Overview
+    </a>
+  </div>
+
+  <div class="breakdown-grid">
     <!-- Subject Distribution Chart -->
     <div class="chart-section">
-        <h3>Time Spent per Subject</h3>
-        <div class="chart-container">
-            <canvas id="subjectChart"></canvas>
-        </div>
+      <h3>Time Spent per Subject</h3>
+      <div class="chart-container">
+        <canvas id="subjectChart"></canvas>
+      </div>
     </div>
 
     <!-- Subject List with Details -->
     <div class="subjects-list" id="subjects-list">
-        <!-- Subjects will be loaded by JavaScript -->
+      <!-- Subjects will be loaded by JavaScript -->
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-.subject-breakdown {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.chart-section {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.chart-section h3 {
-    margin-bottom: 20px;
-    color: var(--dark);
-    font-size: 1.3em;
-}
-
-.chart-container {
-    height: 300px;
-    position: relative;
-}
-
-.subjects-list {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.subject-item {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
-    transition: all 0.3s ease;
-}
-
-.subject-item:last-child {
-    border-bottom: none;
-}
-
-.subject-item:hover {
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.subject-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.subject-name {
-    font-weight: 700;
-    color: var(--dark);
-    font-size: 1.1em;
-}
-
-.study-time {
-    color: var(--primary);
-    font-weight: 700;
-    font-size: 1.1em;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-
-.subject-stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9em;
-    color: var(--gray);
-}
-
-.subject-stats span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.empty-subjects {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--gray);
-}
-
-.empty-subjects i {
-    font-size: 3em;
-    margin-bottom: 15px;
-    opacity: 0.5;
-}
-
-/* Color coding for different subjects */
-.subject-math .progress-fill { background: linear-gradient(90deg, #FF6B6B, #FF8E8E); }
-.subject-science .progress-fill { background: linear-gradient(90deg, #4ECDC4, #88D8C0); }
-.subject-history .progress-fill { background: linear-gradient(90deg, #45B7D1, #7BCBEB); }
-.subject-english .progress-fill { background: linear-gradient(90deg, #96CEB4, #B5EAD7); }
-.subject-programming .progress-fill { background: linear-gradient(90deg, #FFBE0B, #FFD93D); }
-
-@media (max-width: 768px) {
-    .subject-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-    
-    .subject-stats {
-        flex-direction: column;
-        gap: 5px;
-    }
-    
-    .chart-container {
-        height: 250px;
-    }
-}
-.error {
-    color: var(--danger) !important;
-}
-
-.error i {
-    color: var(--danger) !important;
-}
-
-.session-notes {
-    margin-top: 10px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    font-size: 0.9em;
-    color: var(--gray);
-    border-left: 3px solid var(--primary);
-}
-</style>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'js/subject_breakdown.js' %}"></script>
 {% endblock %}
