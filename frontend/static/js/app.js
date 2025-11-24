@@ -36,7 +36,7 @@ function updateDateDisplay() {
 
 // Navigation functionality
 function initializeNavigation() {
-  const navItems = document.querySelectorAll(".nav-item");
+  const navItems = document.querySelectorAll("a.nav-item");
   const pages = document.querySelectorAll(".page");
 
   navItems.forEach((item) => {
