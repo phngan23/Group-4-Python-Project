@@ -71,6 +71,15 @@
       >
         <i class="fas fa-tasks"></i>
       </a>
+
+      <!-- Nút chuyển giao diện tối-->
+      <div
+        class="nav-item"
+        id="theme-toggle"
+        style="margin-top: auto; margin-bottom: 20px"
+      >
+        <i class="fas fa-moon"></i>
+      </div>
     </div>
 
     <!-- Main Content -->
@@ -167,8 +176,8 @@
     <!-- Scripts -->
     <script src="{% static 'js/app.js' %}"></script>
     <script src="{% static 'js/characters.js' %}"></script>
-    
-    <!-- Global Music Player Script -->
+
+    <!-- Global Music Player Script - THÊM VÀO ĐÂY -->
     <script>
     // Khởi tạo global music player trên mọi page
     if (!window.globalMusicPlayer) {
@@ -278,6 +287,43 @@
           // Lưu interval để clear khi cần
           window.miniClockInterval = miniClockInterval;
       }
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("theme-toggle");
+
+        if (toggleBtn) {
+          const icon = toggleBtn.querySelector("i");
+          const body = document.body;
+
+          // 1. Khôi phục trạng thái từ bộ nhớ
+          const currentTheme = localStorage.getItem("theme");
+          if (currentTheme === "dark") {
+            body.classList.add("dark-mode");
+            icon.classList.replace("fa-moon", "fa-sun");
+          }
+
+          // 2. Xử lý sự kiện click
+          toggleBtn.addEventListener("click", function (e) {
+            // --- QUAN TRỌNG: Dòng này ngăn trang web bị reload hoặc nhảy lung tung ---
+            e.preventDefault();
+            e.stopPropagation();
+            // ------------------------------------------------------------------------
+
+            body.classList.toggle("dark-mode");
+
+            // Đổi icon và lưu trạng thái
+            if (body.classList.contains("dark-mode")) {
+              icon.classList.replace("fa-moon", "fa-sun");
+              localStorage.setItem("theme", "dark");
+            } else {
+              icon.classList.replace("fa-sun", "fa-moon");
+              localStorage.setItem("theme", "light");
+            }
+          });
+        }
+      });
     </script>
     
     {% block scripts %}{% endblock %}
