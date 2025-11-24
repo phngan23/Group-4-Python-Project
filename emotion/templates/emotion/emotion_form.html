@@ -1,95 +1,92 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Track Your Mood{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}Track Your
+Mood{%endblock %} {% block content %}
 <div class="page active" id="emotion-form">
-    <h1 class="page-title">How are you feeling?</h1>
-    
-    <div class="welcome-card">
-        <h3>Select your current mood</h3>
-        <p class="subtitle">Choose how you're feeling right now</p>
-        
-        <div class="mood-container" id="mood-options">
-            <!-- Mood options will be loaded by JavaScript -->
-        </div>
+  <h1 class="page-title">How are you feeling?</h1>
 
-        <!-- Additional Notes -->
-        <div class="mood-notes">
-            <label for="mood-notes">Additional notes (optional):</label>
-            <textarea id="mood-notes" placeholder="What's making you feel this way?"></textarea>
-        </div>
+  <div class="welcome-card">
+    <h3>Select your current mood</h3>
+    <p class="subtitle">Choose how you're feeling right now</p>
 
-        <!-- Submit Button -->
-        <div class="form-actions">
-            <button id="save-mood-btn" class="save-btn" disabled>
-                <i class="fas fa-save"></i> Save Mood
-            </button>
-            <a href="{% url 'emotion:emotion_view' %}" class="view-history-btn">
-                <i class="fas fa-history"></i> View History
-            </a>
-        </div>
+    <div class="mood-container" id="mood-options">
+      <!-- Mood options will be loaded by JavaScript -->
     </div>
+
+    <!-- Additional Notes -->
+    <div class="mood-notes">
+      <label for="mood-notes">Additional notes (optional):</label>
+      <textarea
+        id="mood-notes"
+        placeholder="What's making you feel this way?"
+      ></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button id="save-mood-btn" class="save-btn" disabled>
+        <i class="fas fa-save"></i> Save Mood
+      </button>
+      <a href="{% url 'emotion:emotion_view' %}" class="view-history-btn">
+        <i class="fas fa-history"></i> View History
+      </a>
+    </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
+{% endblock %} {% block extra_css %}
 <style>
-    .mood-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 15px;
-        margin: 30px 0;
-    }
+  .mood-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+  }
 
-    .mood-option {
-        background: white;
-        border-radius: 15px;
-        padding: 25px 15px;
-        text-align: center;
-        cursor: pointer; 
-            transition: all 0.3s ease;
+  .mood-option {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
     border: 2px solid transparent;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
+  }
 
-.mood-option:hover {
+  .mood-option:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
+  }
 
-.mood-option.selected {
+  .mood-option.selected {
     background: var(--primary);
     color: white;
     border-color: var(--secondary);
     transform: translateY(-5px);
-}
+  }
 
-.mood-icon {
+  .mood-icon {
     font-size: 2.5em;
     margin-bottom: 10px;
     display: block;
-}
+  }
 
-.subtitle {
+  .subtitle {
     color: var(--gray);
     margin-bottom: 20px;
     text-align: center;
-}
+  }
 
-.mood-notes {
+  .mood-notes {
     margin: 25px 0;
-}
+  }
 
-.mood-notes label {
+  .mood-notes label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: var(--dark);
-}
+  }
 
-.mood-notes textarea {
+  .mood-notes textarea {
     width: 100%;
     padding: 12px;
     border: 2px solid #e0e0e0;
@@ -98,21 +95,21 @@
     min-height: 80px;
     font-family: inherit;
     transition: border-color 0.3s ease;
-}
+  }
 
-.mood-notes textarea:focus {
+  .mood-notes textarea:focus {
     outline: none;
     border-color: var(--primary);
-}
+  }
 
-.form-actions {
+  .form-actions {
     display: flex;
     gap: 15px;
     justify-content: center;
     margin-top: 25px;
-}
+  }
 
-.save-btn {
+  .save-btn {
     background: var(--primary);
     color: white;
     border: none;
@@ -124,20 +121,20 @@
     display: flex;
     align-items: center;
     gap: 8px;
-}
+  }
 
-.save-btn:hover:not(:disabled) {
+  .save-btn:hover:not(:disabled) {
     background: var(--secondary);
     transform: translateY(-2px);
-}
+  }
 
-.save-btn:disabled {
+  .save-btn:disabled {
     background: var(--gray);
     cursor: not-allowed;
     transform: none;
-}
+  }
 
-.view-history-btn {
+  .view-history-btn {
     background: var(--light);
     color: var(--dark);
     padding: 12px 25px;
@@ -149,21 +146,19 @@
     align-items: center;
     gap: 8px;
     border: 2px solid transparent;
-}
+  }
 
-.view-history-btn:hover {
+  .view-history-btn:hover {
     background: var(--primary);
     color: white;
     transform: translateY(-2px);
-}
+  }
 </style>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="{% static 'js/mood.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeMoodForm();
-    });
+  document.addEventListener("DOMContentLoaded", function () {
+    initializeMoodForm();
+  });
 </script>
 {% endblock %}
