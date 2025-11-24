@@ -3,7 +3,7 @@
 ## 1. Introduction
 **Study Tracker** is an innovative web application specifically designed to empower students in managing their academic time effectively through the powerful combination of the Pomodoro technique, gamification elements, and comprehensive data analytics. In today's fast-paced academic environment, students often struggle with time management, motivation, and maintaining consistent study habits. Our application addresses these challenges by providing a holistic solution that not only helps track study time but also enhances the overall learning experience.
 
-The application transforms traditional study methods into an engaging, interactive journey. By integrating proven time management techniques with modern technology, Study Tracker helps students develop sustainable study habits while providing valuable insights into their learning patterns. The platform understands that effective learning isn't just about spending hours with books—it's about quality, consistency, and understanding one's own learning process.
+The application transforms traditional study methods into an engaging, interactive journey. By integrating proven time management techniques with modern technology, Study Tracker helps students develop sustainable study habits while providing valuable insights into their learning patterns. The platform understands that effective learning isn't just about spending hours with books, it's about quality, consistency, and understanding one's own learning process.
 
 What sets Study Tracker apart is its multi-faceted approach to student productivity. We recognize that motivation fluctuates, and maintaining consistent study habits can be challenging. That's why we've built a system that not only tracks your study time but also rewards your efforts, understands your emotional state, and provides actionable insights to help you optimize your learning strategy. The application serves as both a practical tool and a motivational companion throughout your academic journey.
 
@@ -56,6 +56,7 @@ What sets Study Tracker apart is its multi-faceted approach to student productiv
 
 ### Prerequisites
 - **Python 3.13** (Latest stable version)
+- **Django 5.x** (Web framework for backend development)
 - **Git** for version control and repository management
 - **Virtual Environment** support for dependency isolation
 
@@ -104,7 +105,32 @@ python manage.py runserver
 ### Step 7: Access the Application
 Open your preferred web browser and navigate to: http://127.0.0.1:8000/
 
-## 5. User Guide
+## 5. Project Structure & Organization
+```text
+StudyTrackWeb_Group4_DSEB66B/
+│
+├── accounts/         # User authentication & profile management
+├── study/            # Pomodoro timer and study session tracking
+├── emotion/          # Mood logging and emotional analytics
+├── visualization/    # Data visualization and analytic reports
+├── todo/             # Task and deadline management
+├── gamification/     # Reward system and virtual shop
+├── music/            # Focus music and audio features
+│
+├── frontend/         # Front-end UI (Home page + assets)
+│   ├── templates/frontend/   # Home page (index.html) and UI pages
+│   └── static/               # CSS, JS, images, and other assets
+│
+├── templates/        # Shared Django templates (base.html, layouts)
+├── static/           # Collected static files for production
+│
+├── studyhabit/       # Django project configuration (settings, urls)
+├── requirements.txt  # Python dependencies
+├── manage.py         # Django management script
+└── .gitignore        # Git ignore rules
+```
+
+## 6. User Guide
 ### Getting Started with Study Tracker
 Begin your productivity journey by creating a personalized account that will track your progress and adapt to your study patterns. The intuitive setup process guides you through configuring your study preferences, including preferred session lengths, break durations, and academic subjects.
 
