@@ -2313,12 +2313,9 @@ body {
 /* Khi body có class .dark-mode, các biến màu sẽ thay đổi */
 body.dark-mode {
   /* Đảo ngược màu nền và màu chữ */
-  /*--light: #9995bd; /* Màu nền tối (xám đậm/đen) */
-  --light: #ffffff; /* SỬA: Giữ màu trắng cho nền */
-  /*--dark: #ffffff; /* Chữ trắng */
-  --dark: #2d3748; /* SỬA: Giữ màu đen cho chữ */
-  /*--page-title: #2c2b4b;
-  --page-title: #2d3748; /* SỬA: Giữ màu đen cho tiêu đề */
+  --light: #9995bd; /* Màu nền tối (xám đậm/đen) */
+  --dark: #ffffff; /* Chữ trắng */
+  --page-title: #2c2b4b;
   --back: #dcc9e8;
 
   /* Đổi màu gradient (nền của các thẻ card) thành màu tối đơn sắc hoặc gradient tối */
