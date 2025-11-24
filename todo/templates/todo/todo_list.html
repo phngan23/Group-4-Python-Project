@@ -1,68 +1,73 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "base.html" %} 
+{% load static %} 
 
-{% block title %}My Tasks{% endblock %}
+{% block title %}My Tasks {%endblock%} 
 
 {% block content %}
 <div class="page active" id="todo-list">
-    <h1 class="page-title">My Tasks</h1>
-    
-    <div class="task-manager">
-        <!-- Task Filters -->
-        <div class="task-filters">
-            <button class="filter-btn active" data-filter="all">All Tasks</button>
-            <button class="filter-btn" data-filter="pending">⏳ Pending</button>
-            <button class="filter-btn" data-filter="completed">✅ Completed</button>
-            <button class="filter-btn" data-filter="overdue">🚨 Overdue</button>
-        </div>
+  <h1 class="page-title">My Tasks</h1>
 
-        <!-- Task Statistics -->
-        <div class="task-stats" id="task-stats">
-            <!-- Stats will be loaded by JavaScript -->
-        </div>
-
-        <!-- AI Training Section -->
-        <div class="ai-training-section">
-            <div class="ai-info-card">
-                <div class="ai-header">
-                    <i class="fas fa-robot"></i>
-                    <h4>Smart Task Predictor</h4>
-                </div>
-                <p>AI learns from your completed tasks to predict how long new tasks will take.</p>
-                <button id="train-model-btn" class="train-btn">
-                    <i class="fas fa-brain"></i> Train AI Model
-                </button>
-                <div id="training-result" class="training-result"></div>
-            </div>
-        </div>
-
-        <!-- Tasks List -->
-        <div class="task-list-container">
-            <div id="tasks-container">
-                <!-- Tasks will be loaded by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <div class="navigation-actions">
-            <a href="{% url 'todo:add_todo' %}" class="add-task-btn">
-                <i class="fas fa-plus"></i> Add New Task
-            </a>
-        </div>
+  <div class="task-manager">
+    <!-- Task Filters -->
+    <div class="task-filters">
+      <button class="filter-todo-btn active" data-filter="all">
+        All Tasks
+      </button>
+      <button class="filter-todo-btn" data-filter="pending">⏳ Pending</button>
+      <button class="filter-todo-btn" data-filter="completed">
+        ✅ Completed
+      </button>
+      <button class="filter-todo-btn" data-filter="overdue">🚨 Overdue</button>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_css %}
+    <!-- Task Statistics -->
+    <div class="task-stats" id="task-stats">
+      <!-- Stats will be loaded by JavaScript -->
+    </div>
+
+    <!-- AI Training Section -->
+    <div class="ai-training-section">
+      <div class="ai-info-card">
+        <div class="ai-header">
+          <i class="fas fa-robot"></i>
+          <h4>Smart Task Predictor</h4>
+        </div>
+        <p>
+          AI learns from your completed tasks to predict how long new tasks will
+          take.
+        </p>
+        <button id="train-model-btn" class="train-btn">
+          <i class="fas fa-brain"></i> Train AI Model
+        </button>
+        <div id="training-result" class="training-result"></div>
+      </div>
+    </div>
+
+    <!-- Tasks List -->
+    <div class="task-list-container">
+      <div id="tasks-container">
+        <!-- Tasks will be loaded by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation-actions">
+      <a href="{% url 'todo:add_todo' %}" class="add-task-btn">
+        <i class="fas fa-plus"></i> Add New Task
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_css %}
 <style>
-.task-filters {
+  .task-filters {
     display: flex;
     gap: 10px;
     margin-bottom: 25px;
     flex-wrap: wrap;
-}
+  }
 
-.filter-btn {
+  .filter-todo-btn {
     padding: 10px 20px;
     border: 2px solid var(--primary);
     background: white;
@@ -71,73 +76,73 @@
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
-}
+  }
 
-.filter-btn.active,
-.filter-btn:hover {
+  .filter-todo-btn.active,
+  .filter-todo-btn:hover {
     background: var(--primary);
     color: white;
-}
+  }
 
-.task-stats {
+  .task-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
     margin-bottom: 25px;
-}
+  }
 
-.stat-card {
+  .stat-todo-card {
     background: white;
     padding: 20px;
     border-radius: 15px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
+  }
 
-.stat-number {
+  .stat-number {
     font-size: 2em;
     font-weight: bold;
     color: var(--primary);
     margin: 10px 0;
-}
+  }
 
-.stat-label {
+  .stat-todo-label {
     color: var(--gray);
     font-size: 0.9em;
-}
+  }
 
-/* AI Training Section */
-.ai-training-section {
+  /* AI Training Section */
+  .ai-training-section {
     margin-bottom: 25px;
-}
+  }
 
-.ai-info-card {
+  .ai-info-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
+  }
 
-.ai-header {
+  .ai-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
-}
+  }
 
-.ai-header h4 {
+  .ai-header h4 {
     margin: 0;
     font-size: 1.2em;
-}
+  }
 
-.ai-info-card p {
+  .ai-info-card p {
     margin-bottom: 20px;
     opacity: 0.9;
     line-height: 1.5;
-}
+  }
 
-.train-btn {
+  .train-btn {
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -149,49 +154,49 @@
     display: flex;
     align-items: center;
     gap: 8px;
-}
+  }
 
-.train-btn:hover {
+  .train-btn:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
-}
+  }
 
-.training-result {
+  .training-result {
     margin-top: 15px;
     padding: 10px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.1);
     font-size: 0.9em;
-}
+  }
 
-/* Task List */
-.task-list-container {
+  /* Task List */
+  .task-list-container {
     background: white;
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     min-height: 400px;
-}
+  }
 
-.task-item {
+  .task-item {
     display: flex;
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #f0f0f0;
     transition: all 0.3s ease;
     gap: 15px;
-}
+  }
 
-.task-item:last-child {
+  .task-item:last-child {
     border-bottom: none;
-}
+  }
 
-.task-item:hover {
+  .task-item:hover {
     background: #f8f9fa;
     border-radius: 10px;
-}
+  }
 
-.task-checkbox {
+  .task-checkbox {
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -202,81 +207,90 @@
     justify-content: center;
     transition: all 0.3s ease;
     flex-shrink: 0;
-}
+  }
 
-.task-checkbox.completed {
+  .task-checkbox.completed {
     background: var(--success);
     border-color: var(--success);
     color: white;
-}
+  }
 
-.task-content {
+  .task-content {
     flex: 1;
     min-width: 0;
-}
+  }
 
-.task-title {
+  .task-title {
     font-weight: 600;
     margin-bottom: 8px;
     color: var(--dark);
     font-size: 1.1em;
-}
+  }
 
-.task-title.completed {
+  .task-title.completed {
     text-decoration: line-through;
     color: var(--gray);
-}
+  }
 
-.task-description {
+  .task-description {
     color: var(--gray);
     margin-bottom: 10px;
     line-height: 1.4;
-}
+  }
 
-.task-meta {
+  .task-meta {
     display: flex;
     gap: 15px;
     font-size: 0.9em;
     color: var(--gray);
     flex-wrap: wrap;
     align-items: center;
-}
+  }
 
-.task-priority.high { color: var(--danger); font-weight: 600; }
-.task-priority.medium { color: var(--warning); font-weight: 600; }
-.task-priority.low { color: var(--success); font-weight: 600; }
+  .task-priority.high {
+    color: var(--danger);
+    font-weight: 600;
+  }
+  .task-priority.medium {
+    color: var(--warning);
+    font-weight: 600;
+  }
+  .task-priority.low {
+    color: var(--success);
+    font-weight: 600;
+  }
 
-.task-category {
-    background: var(--light);
+  .task-category {
+    background: #ededed;
     padding: 2px 8px;
     border-radius: 8px;
     font-size: 0.8em;
-}
+  }
 
-.task-duration {
+  .task-duration {
     background: #e3f2fd;
     color: #1976d2;
     padding: 2px 8px;
     border-radius: 8px;
     font-size: 0.8em;
     font-weight: 600;
-}
+  }
 
-.task-overdue {
+  .task-overdue {
     color: var(--danger);
     font-weight: 600;
     background: #ffebee;
     padding: 2px 8px;
     border-radius: 8px;
-}
+  }
 
-.task-actions {
+  .task-actions {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
-}
+  }
 
-.task-action-btn {
+  .task-action-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -287,19 +301,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
+  }
 
-.task-action-btn:hover {
+  .task-action-btn:hover {
     background: var(--light);
     color: var(--primary);
-}
+  }
 
-.navigation-actions {
+  .navigation-actions {
     text-align: center;
     margin-top: 25px;
-}
+  }
 
-.add-task-btn {
+  .add-task-btn {
     background: var(--primary);
     color: white;
     padding: 12px 25px;
@@ -310,26 +324,26 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
+  }
 
-.add-task-btn:hover {
+  .add-task-btn:hover {
     background: var(--secondary);
     transform: translateY(-2px);
-}
+  }
 
-.empty-state {
+  .empty-state {
     text-align: center;
     padding: 60px 20px;
     color: var(--gray);
-}
+  }
 
-.empty-state i {
+  .empty-state i {
     font-size: 3em;
     margin-bottom: 15px;
     opacity: 0.5;
-}
+  }
 
-.reward-badge {
+  .reward-badge {
     background: var(--warning);
     color: white;
     padding: 4px 10px;
@@ -337,54 +351,52 @@
     font-size: 0.8em;
     margin-left: 10px;
     font-weight: 600;
-}
+  }
 
-.reward-badge.upcoming {
+  .reward-badge.upcoming {
     background: var(--success);
     opacity: 0.8;
-}
+  }
 
-/* Responsive */
-@media (max-width: 768px) {
+  /* Responsive */
+  @media (max-width: 768px) {
     .task-filters {
-        justify-content: center;
+      justify-content: center;
     }
-    
+
     .task-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
     }
-    
+
     .task-actions {
-        align-self: flex-end;
+      align-self: flex-end;
     }
-    
+
     .task-meta {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
     }
-}
+  }
 
-@media (max-width: 480px) {
+  @media (max-width: 480px) {
     .task-stats {
-        grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
-    
-    .filter-btn {
-        padding: 8px 16px;
-        font-size: 0.9em;
-    }
-}
-</style>
-{% endblock %}
 
-{% block scripts %}
+    .filter-todo-btn {
+      padding: 8px 16px;
+      font-size: 0.9em;
+    }
+  }
+</style>
+{% endblock %} {% block scripts %}
 <script src="{% static 'js/todo.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeTodoList();
-    });
+  document.addEventListener("DOMContentLoaded", function () {
+    initializeTodoList();
+  });
 </script>
 {% endblock %}
