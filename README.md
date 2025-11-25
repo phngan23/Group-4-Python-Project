@@ -142,3 +142,6 @@ Leverage our intelligent Pomodoro timer to transform your study habits. Start by
 - Emotion Tracking: Develop self-awareness by logging your post-study moods and discovering patterns between your emotional state and study effectiveness
 - Gamification Engagement: Build your virtual avatar collection and climb the achievement ladder by maintaining consistent study habits
 - Analytics Review: Regularly check your personalized dashboards to understand your study patterns and identify opportunities for improvement
+
+## 7. Tutorial Video
+https://drive.google.com/drive/folders/1mpMfJQ1ZTw3zmMOnHpcSVszA5I3uJbkB?usp=sharing
