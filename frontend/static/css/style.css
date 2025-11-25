@@ -551,7 +551,7 @@ body {
 
 /* Modal content */
 .modal-content {
-  background: var(--gradient);
+  background: var(--gradient) !important;
   padding: 24px;
   border-radius: 14px;
   width: 350px;
@@ -583,7 +583,7 @@ body {
 .cancel-btn,
 .save-btn {
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 25px;
   cursor: pointer;
   border: none;
 }
@@ -981,7 +981,7 @@ body {
 }
 
 .mood-option.selected {
-  background: var(--primary);
+  background: var(--secondary);
   color: white;
 }
 
@@ -1671,17 +1671,20 @@ body {
 
 .progress-bar {
   width: 100%;
-  height: 10px; /* Dày hơn chút cho dễ nhìn */
-  background: #f0f0f0;
-  border-radius: 10px;
+  height: 7px; /* Dày hơn chút cho dễ nhìn */
+  background: #e9ecef;
+  border-radius: 5px;
+  margin-bottom: 8px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ffe1a9, var(--primary), var(--secondary));
-  border-radius: 10px;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Animation mượt hơn */
+  background: linear-gradient(90deg, #ffc4a9, var(--primary), #ff7797);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.1s linear; /* Animation mượt hơn */
 }
 
 .subject-stats {
@@ -1908,7 +1911,6 @@ body {
 }
 
 .session-item:hover {
-  background: var(--light);
   transform: translateX(5px);
 }
 
@@ -1923,6 +1925,7 @@ body {
 }
 
 .session-date {
+  /*dùng chung với study session history*/
   color: var(--gray);
   font-size: 0.9em;
 }
@@ -1989,16 +1992,6 @@ body {
 
 .error i {
   color: var(--danger) !important;
-}
-
-.session-notes {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9em;
-  color: var(--gray);
-  border-left: 3px solid var(--primary);
 }
 
 /*Study sessions*/
@@ -2079,6 +2072,7 @@ body {
 }
 
 .session-date {
+  /*dùng chung với recent study session*/
   color: var(--gray);
   font-size: 0.9em;
 }
@@ -2102,8 +2096,9 @@ body {
 
 .empty-state {
   text-align: center;
+  font-weight: 600;
   padding: 60px 20px;
-  color: var(--secondary-dark);
+  color: var(--secondary);
 }
 
 .empty-state i {
@@ -2135,16 +2130,6 @@ body {
 
 .error i {
   color: var(--danger) !important;
-}
-
-.session-notes {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9em;
-  color: var(--gray);
-  border-left: 3px solid var(--primary);
 }
 
 /* ===== Music page specific styles ===== */
@@ -2214,24 +2199,6 @@ body {
   margin-bottom: 16px;
 }
 
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background: #e9ecef;
-  border-radius: 3px;
-  margin-bottom: 8px;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 3px;
-  width: 0%;
-  transition: width 0.1s linear;
-}
-
 .time-display {
   display: flex;
   justify-content: space-between;
@@ -2275,7 +2242,7 @@ body {
 }
 
 .control-btn:disabled {
-  background: #ccc;
+  background: var(--light-gray);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -2374,6 +2341,10 @@ body.dark-mode .grass {
   filter: brightness(0.7); /* Làm tối mây và cỏ */
 }
 
+body.dark-mode .pomodoro-character-area img {
+  filter: drop-shadow(0 0px 20px #ffffff33);
+}
+
 body.dark-mode .mascot {
   box-shadow: 0 0 20px #ffffff33; /* Thêm hào quang cho nút mascot */
 }
@@ -2433,6 +2404,14 @@ body.dark-mode .mode-btn.active {
   color: var(--page-title);
 }
 
+body.dark-mode .date-title {
+  color: var(--page-title);
+}
+
+body.dark-mode td:first-child {
+  color: var(--secondary-dark);
+}
+
 /* ======================================= 
     Time Presets Section 
  ======================================= */
@@ -2444,19 +2423,19 @@ body.dark-mode .preset-btn {
 
 body.dark-mode .preset-btn:hover {
   background: var(--primary);
-  color: white;
+  color: var(--dark);
 }
 
 /* View History button */
 body.dark-mode .history-btn {
-  background: white;
+  background: var(--dark);
   color: var(--page-title);
 }
 
 body.dark-mode .history-btn:hover {
   border: 1px solid var(--primary);
   background: var(--primary);
-  color: white;
+  color: var(--dark);
 }
 
 body.dark-mode .progress-bar {
@@ -2464,7 +2443,7 @@ body.dark-mode .progress-bar {
 }
 
 body.dark-mode .progress-fill {
-  background: linear-gradient(90deg, #ffc5d0, var(--primary), var(--secondary));
+  background: linear-gradient(90deg, #f3a0a5, #a868a9, #7251b5);
 }
 
 body.dark-mode .progress-header {
@@ -2486,13 +2465,13 @@ body.dark-mode .unlock-info {
 }
 
 body.dark-mode .nav-btn {
-  background: white;
+  background: var(--dark);
   color: var(--page-title);
 }
 
 body.dark-mode .nav-btn:hover {
   background: var(--primary);
-  color: white;
+  color: var(--dark);
 }
 
 body.dark-mode .chart-container {
@@ -2501,13 +2480,11 @@ body.dark-mode .chart-container {
 }
 
 body.dark-mode .session-subject {
-  font-weight: 600;
   color: var(--page-title);
 }
 
 body.dark-mode .session-duration {
   color: var(--secondary-dark);
-  font-weight: 700;
 }
 
 body.dark-mode .back-btn {
@@ -2528,7 +2505,7 @@ body.dark-mode .session-card {
 }
 
 body.dark-mode .session-date {
-  color: var(--back);
+  color: var(--primary);
 }
 
 body.dark-mode .empty-state {
@@ -2536,7 +2513,7 @@ body.dark-mode .empty-state {
 }
 
 body.dark-mode .now-playing-card {
-  background: white;
+  background: var(--dark);
 }
 
 body.dark-mode .track-details h3 {
@@ -2553,7 +2530,7 @@ body.dark-mode .stat-todo-card {
   padding: 20px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
 }
 
 body.dark-mode .stat-number {
@@ -2576,21 +2553,26 @@ body.dark-mode .task-action-btn:hover {
   color: var(--secondary);
 }
 
-body.dark-mode .current-mood-section,
-body.dark-mode .mood-history-section,
-body.dark-mode .mood-stats {
-  color: var(--page-title) !important; /* Ép chữ thành màu xám đậm */
+body.dark-mode .mood-stats,
+body.dark-mode .mood-history-section {
+  color: var(--page-title) !important;
+  background: #b695c7;
+}
+
+body.dark-mode .current-mood-section {
+  color: var(--page-title) !important;
+  background: var(--back);
 }
 
 body.dark-mode .current-mood-section h3,
 body.dark-mode .mood-history-section h3,
 body.dark-mode .mood-stats h3 {
-  color: var(--page-title) !important; /* Ép tiêu đề thành màu xám đậm */
+  color: var(--page-title) !important;
 }
 
 /* 1. Đổi nền thẻ từ tím sang trắng */
 body.dark-mode .stat-item {
-  background: var(--back);
+  background: var(--dark);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho nổi */
   border: none;
 }
@@ -2602,8 +2584,8 @@ body.dark-mode .stat-item .stat-value {
 
 /* 3. Đổi màu dòng chữ nhỏ chú thích (VD: Total Entries...) */
 body.dark-mode .stat-item .stat-label {
-  color: var(--secondary) !important; /* Màu hồng đỏ */
-  font-weight: 600; /* Tăng độ đậm một chút cho dễ đọc */
+  color: var(--secondary) !important;
+  font-weight: 600;
 }
 
 body.dark-mode .session-card {
@@ -2624,6 +2606,11 @@ body.dark-mode .subject-stats span {
   box-shadow: none !important;
 }
 
+body.dark-mode .no-data,
+body.dark-mode .empty-state {
+  color: var(--primary);
+}
+
 /* 3. Giảm cỡ chữ chung cho phần thống kê này (áp dụng cả 2 mode nếu bạn muốn, hoặc chỉ dark mode) */
 .subject-stats > div,
 .subject-stats span {
@@ -2640,39 +2627,182 @@ body.dark-mode .subject-stats span {
 
 /* Mini Clock Styles */
 .mini-clock-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: white;
-    border-radius: 10px;
-    padding: 10px 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    border: 2px solid var(--primary);
-    backdrop-filter: blur(10px);
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--primary);
+  backdrop-filter: blur(10px);
 }
 
 .mini-clock {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .mini-clock-icon {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .mini-clock-time {
-    color: var(--primary);
-    font-weight: 700;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .mini-clock-mode {
-    background: var(--primary);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+  background: var(--primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/*====================================================*/
+/* POPUP HỘP CHỌN CẢM XÚC SAU KHI HỌC XONG*/
+/*====================================================*/
+
+.emotion-modal.hidden {
+  display: none;
+}
+
+.emotion-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.emotion-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.emotion-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  width: 360px;
+  max-width: 90vw;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+}
+
+.emotion-modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.emotion-subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 16px;
+}
+
+.emotion-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.emotion-option {
+  flex: 1 1 45%;
+  border-radius: 999px;
+  border: 1px solid var(--primary);
+  background: white;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.emotion-option:hover {
+  background: var(--primary);
+}
+
+.emotion-option.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.emotion-notes textarea {
+  width: 100%;
+  min-height: 70px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  color: #333;
+  padding: 8px 10px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.emotion-notes label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.emotion-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+#emotion-save-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#emotion-save-btn:disabled {
+  background: var(--gray);
+  cursor: not-allowed;
+}
+
+#emotion-skip-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #f9fafb;
+  color: #333;
+  cursor: pointer;
+}
+
+#emotion-skip-btn:hover {
+  background-color: #e2e6ea;
+}
+
+.study-summary-text {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--page-title);
+  margin-bottom: 14px;
+  margin-top: 0;
+}
+
+/* 6. Fix ô nhập liệu Notes (nếu có dùng) */
+body.dark-mode .emotion-modal-content textarea {
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ced4da !important;
 }
