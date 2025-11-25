@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count
 
 from accounts.models import Profile
-#from study.models import StudySession
-
 
 class EmotionEntry(models.Model):
     profile = models.ForeignKey(
@@ -51,9 +51,6 @@ class EmotionEntry(models.Model):
         verbose_name_plural = "Emotion Entries (Các cảm xúc)"
         ordering = ['-created_at']
 
-from django.utils import timezone
-from datetime import timedelta
-from django.db.models import Count
 
 class EmotionStats:
     """Helper class để tính toán thống kê cảm xúc"""
@@ -93,6 +90,60 @@ class EmotionStats:
                 })
 
         return history
+
+    @staticmethod
+    def get_weekly_emotion_distribution(profile):
+        """Thống kê tần suất các loại cảm xúc trong 7 ngày qua"""
+        end_date = timezone.now().date()
+        start_date = end_date - timedelta(days=6)
+
+        emotion_counts = EmotionEntry.objects.filter(
+            profile=profile,
+            created_at__date__range=[start_date, end_date]
+        ).values('emotion').annotate(count=Count('id')).order_by('-count')
+
+        # Tạo distribution với tất cả emotions, kể cả count = 0
+        distribution = []
+        all_emotions = dict(EmotionEntry.EMOTION_CHOICES)
+        
+        for emotion_value, emotion_display in all_emotions.items():
+            count_data = next((item for item in emotion_counts if item['emotion'] == emotion_value), None)
+            count = count_data['count'] if count_data else 0
+            
+            # Map emotion value với icon và màu sắc
+            icon_map = {
+                'happy': '😊',
+                'sad': '😢', 
+                'tired': '😴',
+                'calm': '😌',
+                'stressed': '😤',
+                'excited': '🤩',
+            }
+            
+            color_map = {
+                'happy': '#4CAF50',
+                'sad': '#2196F3',
+                'tired': '#FF9800', 
+                'calm': '#009688',
+                'stressed': '#F44336',
+                'excited': '#9C27B0',
+            }
+            
+            distribution.append({
+                'emotion': emotion_value,
+                'label': emotion_display,
+                'icon': icon_map.get(emotion_value, '❓'),
+                'color': color_map.get(emotion_value, '#6C63FF'),
+                'count': count,
+                'percentage': 0  # Sẽ tính sau
+            })
+
+        # Tính tổng và phần trăm
+        total = sum(item['count'] for item in distribution)
+        for item in distribution:
+            item['percentage'] = round((item['count'] / total * 100) if total > 0 else 0, 1)
+
+        return sorted(distribution, key=lambda x: x['count'], reverse=True)
 
     @staticmethod
     def get_emotion_statistics(profile):
