@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Tracker - Đăng Ký</title>
@@ -238,6 +238,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="auth-container">
         <div class="logo">
@@ -316,19 +317,19 @@
             const passwordInput = document.getElementById('password');
             const icon = this.querySelector('i');
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+            if (passwordInput.type === 'password') { // đang là kiểu password
+                passwordInput.type = 'text'; // chuyển sang dạng text
+                icon.classList.remove('fa-eye'); // bỏ icon mắt mở
+                icon.classList.add('fa-eye-slash'); // chuyển thành icon mắt gạch chéo
             } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                passwordInput.type = 'password'; // chuyển từ text về password
+                icon.classList.remove('fa-eye-slash'); // bỏ icon mắt gạch chéo
+                icon.classList.add('fa-eye'); // chuyển lại về icon mắt mở
             }
         });
 
         // Hiển thị/ẩn xác nhận mật khẩu
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() { // chạy khi ấn vào biểu tượng togglePassword (con mắt)
             const confirmPasswordInput = document.getElementById('confirmPassword');
             const icon = this.querySelector('i');
             
@@ -344,7 +345,7 @@
         });
 
         // Kiểm tra độ mạnh mật khẩu
-        document.getElementById('password').addEventListener('input', function() {
+        document.getElementById('password').addEventListener('input', function() { // sự kiện input chạy mỗi khi user gõ
             const password = this.value;
             const strengthBar = document.getElementById('passwordStrength');
             
@@ -386,15 +387,18 @@
             const mismatchElement = document.getElementById('passwordMismatch');
             
             if (confirmPassword.length === 0) {
+                // Ẩn cả 2 thông báo nếu chưa nhập
                 matchElement.style.display = 'none';
                 mismatchElement.style.display = 'none';
                 return;
             }
             
             if (password === confirmPassword) {
+                // Hiển thị "Mật khẩu khớp"
                 matchElement.style.display = 'block';
                 mismatchElement.style.display = 'none';
             } else {
+                // Hiển thị "Mật khẩu không khớp"
                 matchElement.style.display = 'none';
                 mismatchElement.style.display = 'block';
             }
@@ -407,7 +411,7 @@
             const terms = document.getElementById('terms').checked;
             
             if (password !== confirmPassword) {
-                e.preventDefault();
+                e.preventDefault(); // ngăn form gửi đi 
                 alert('Mật khẩu không khớp. Vui lòng kiểm tra lại.');
                 return;
             }

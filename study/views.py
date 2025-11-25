@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -34,7 +34,6 @@ def pomodoro_view(request):
     ).aggregate(duration=Sum('duration_seconds'))['duration'] or 0
 
     study_minutes = total_seconds // 60
-
     inv = Inventory.objects.filter(profile=profile, is_active=True).select_related("character").first()
 
     context = {
@@ -98,8 +97,8 @@ def api_start_session(request):
     session = StudySession.objects.create(
         profile=profile,
         subject=subject,
-        start_time=timezone.now(),
-        is_active=True
+        #start_time=timezone.now(),
+        #is_active=True
     )
 
     # Trả về JSON success, kèm session id
@@ -116,7 +115,6 @@ def api_stop_session(request):
     API POST: /study/api/stop/
     - Tìm session đang active của user
     - Ghi end_time, tính duration_seconds, points_awarded, cập nhật profile.coins
-    - Nhận actual_study_seconds từ frontend
     - Trả về JSON chứa duration và points
     """
     profile = get_object_or_404(Profile, user=request.user)
@@ -128,41 +126,98 @@ def api_stop_session(request):
         # Không có session đang chạy
         return JsonResponse({'status': 'error', 'message': 'no_active_session'}, status=400)
 
-    try:
+    #try:
         # Lấy actual_study_seconds từ frontend
-        data = json.loads(request.body.decode('utf-8'))
-        actual_study_seconds = data.get('actual_study_seconds', 0)
+     #   data = json.loads(request.body.decode('utf-8'))
+      #  actual_study_seconds = data.get('actual_study_seconds', 0)
  
-    except: 
-        actual_study_seconds = 0
-        pass
+    #except: 
+     #   actual_study_seconds = 0
+      #  pass
 
     # Xử lý dừng session thủ công (an toàn)
-    session.end_time = timezone.now()
-    session.duration_seconds = int((session.end_time - session.start_time).total_seconds())
+   # session.end_time = timezone.now()
+   # session.duration_seconds = int((session.end_time - session.start_time).total_seconds())
     
     # QUAN TRỌNG: Sử dụng thời gian THỰC TẾ từ frontend
-    session.actual_study_seconds = actual_study_seconds
+    #session.actual_study_seconds = actual_study_seconds
 
     # Tính điểm dựa trên thời gian THỰC TẾ
-    hours = session.actual_study_seconds / 3600
-    session.points_awarded = int(hours * 30)
+    #hours = session.actual_study_seconds / 3600
+    #session.points_awarded = int(hours * 30)
 
     # Cập nhật xu vào Profile (nếu thiết kế model để update profile ở model thì chú ý không double-add)
-    profile.coins += session.points_awarded
-    profile.save()
+    #profile.coins += session.points_awarded
+    #profile.save()
 
     # Lưu session
-    session.is_active = False
-    session.save()
+    #session.is_active = False
+    #session.save()
+
+    session.stop()
 
     return JsonResponse({
         'status': 'stopped',
         'session_id': session.id,
         'duration_seconds': session.duration_seconds,
-        'actual_study_seconds': session.actual_study_seconds,  # Thời gian thực tế (không pause)
+        #'actual_study_seconds': session.actual_study_seconds,  # Thời gian thực tế (không pause)
         'points_awarded': session.points_awarded
     })
+
+@require_POST
+@login_required
+def api_pause_session(request):
+    """API tạm dừng session"""
+    profile = get_object_or_404(Profile, user=request.user)
+    session = StudySession.objects.filter(profile=profile, is_active=True).first()
+    
+    if not session:
+        return JsonResponse({'status': 'error', 'message': 'no_active_session'}, status=400)
+    
+    session.pause()
+    return JsonResponse({'status': 'paused', 'session_id': session.id})
+
+@require_POST
+@login_required
+def api_resume_session(request):
+    """API tiếp tục session"""
+    profile = get_object_or_404(Profile, user=request.user)
+    session = StudySession.objects.filter(profile=profile, is_active=False, pause_time__isnull=False).first()
+    
+    if not session:
+        return JsonResponse({'status': 'error', 'message': 'no_paused_session'}, status=400)
+    
+    session.resume()
+    return JsonResponse({'status': 'resumed', 'session_id': session.id})
+
+# views.py
+
+# ... các import cũ ...
+
+@require_POST
+@login_required
+def api_cancel_session(request):
+    """
+    API: Xóa session theo ID (bất kể đang active hay paused)
+    """
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        session_id = data.get('session_id')
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+
+    profile = get_object_or_404(Profile, user=request.user)
+    
+    # Tìm session thuộc về user này, theo đúng ID gửi lên
+    # Không cần filter is_active=True nữa
+    session = StudySession.objects.filter(id=session_id, profile=profile).first()
+    
+    if session:
+        session.delete()
+        return JsonResponse({'status': 'cancelled', 'message': 'Session deleted'})
+    
+    # Nếu không tìm thấy (có thể đã xóa rồi), vẫn trả về ok để frontend reset
+    return JsonResponse({'status': 'cancelled', 'message': 'Session not found or already deleted'})
 
 @login_required
 def api_get_session_status(request):
@@ -204,6 +259,7 @@ def study_history(request):
 
     sessions = (
         StudySession.objects.filter(profile=profile)
+        .filter(duration_seconds__gte=60)
         .select_related("subject")
         .order_by("-start_time")
     )
@@ -216,10 +272,10 @@ def study_history(request):
         # đảm bảo có end_time/duration_seconds xử lý an toàn
        
         # SỬ DỤNG actual_study_seconds THAY VÌ duration_seconds
-        actual_seconds = getattr(s, "actual_study_seconds", 0)
-        if actual_seconds == 0:
+        #actual_seconds = getattr(s, "actual_study_seconds", 0)
+        #if actual_seconds == 0:
             # Fallback: nếu chưa có actual_study_seconds, dùng duration_seconds
-            actual_seconds = getattr(s, "duration_seconds", 0)
+         #   actual_seconds = getattr(s, "duration_seconds", 0)
         
         emotion_entry = getattr(s, "emotion", None)
         if emotion_entry:
@@ -232,8 +288,10 @@ def study_history(request):
             "subject_name": s.subject.name if s.subject else "—",
             "start_time": s.start_time,
             "end_time": s.end_time,
-            "duration_seconds": actual_seconds, # duration_seconds,
-            "duration_text": _format_duration(actual_seconds), # _format_duration(duration_seconds),
+            "duration_seconds": s.duration_seconds,
+            "duration_text": _format_duration(s.duration_seconds),
+            #"duration_seconds": actual_seconds, # duration_seconds,
+            #"duration_text": _format_duration(actual_seconds), # _format_duration(duration_seconds),
             "points": s.points_awarded,
             "emotion": mood_display,
         })

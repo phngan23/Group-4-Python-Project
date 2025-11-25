@@ -2806,3 +2806,138 @@ body.dark-mode .emotion-modal-content textarea {
   color: #333 !important;
   border: 1px solid #ced4da !important;
 }
+
+.emotion-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.emotion-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.emotion-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  width: 360px;
+  max-width: 90vw;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+}
+
+.emotion-modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.emotion-subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 16px;
+}
+
+.emotion-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.emotion-option {
+  flex: 1 1 45%;
+  border-radius: 999px;
+  border: 1px solid var(--primary);
+  background: white;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.emotion-option:hover {
+  background: var(--primary);
+}
+
+.emotion-option.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.emotion-notes textarea {
+  width: 100%;
+  min-height: 70px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  color: #333;
+  padding: 8px 10px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.emotion-notes label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.emotion-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+#emotion-save-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#emotion-save-btn:disabled {
+  background: var(--gray);
+  cursor: not-allowed;
+}
+
+#emotion-skip-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #f9fafb;
+  color: #333;
+  cursor: pointer;
+}
+
+#emotion-skip-btn:hover {
+  background-color: #e2e6ea;
+}
+
+.study-summary-text {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--page-title);
+  margin-bottom: 14px;
+  margin-top: 0;
+}
+
+/* 6. Fix ô nhập liệu Notes (nếu có dùng) */
+body.dark-mode .emotion-modal-content textarea {
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ced4da !important;
+}

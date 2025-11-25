@@ -1,7 +1,7 @@
 from django.db import models #tạo các bảng trong database
 from django.conf import settings # lấy cấu hình của ứng dụng
 
-# # Lấy model User mặc định từ Django (có thể là 'auth.User' hoặc custom user model)
+# # Lấy model User mặc định từ Django (có thể là 'auth.User' hoặc custom user model) chỉ bao gồm username, password, email, first_name, last_name
 User = settings.AUTH_USER_MODEL
 
 class Profile(models.Model): #Tạo một bảng mới tên là "Profile" trong database
@@ -14,11 +14,10 @@ class Profile(models.Model): #Tạo một bảng mới tên là "Profile" trong 
     coins = models.IntegerField(default=0)  
 
     # Lưu múi giờ của người dùng để hiển thị thời gian đúng
-    #Mặc định là múi giờ Việt Nam
-    # 
+    # Mặc định là múi giờ Việt Nam
     timezone = models.CharField(max_length=50, default='UTC + 7 hours')
     
-    # Bật/tắt thông báo email nhắc nhở (deadline của task sắp đến)
+    # Bật/tắt thông báo email nhắc nhở (deadline của task sắp đến) # phát triển sau
     email_reminder = models.BooleanField(default=True)
 
     # Timestamps: auto_now_add lưu thời điểm tạo; auto_now cập nhật khi save()
