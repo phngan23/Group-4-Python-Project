@@ -7,8 +7,7 @@ import json
 
 from accounts.models import Profile
 from study.models import StudySession
-from .models import EmotionEntry
-from .models import EmotionStats
+from .models import EmotionEntry, EmotionStats
 
 
 @login_required
@@ -17,7 +16,7 @@ def emotion_form(request, session_id):
     session = get_object_or_404(StudySession, id=session_id, profile=request.user.profile)
 
     # Nếu đã có cảm xúc thì render để update
-    existing = getattr(session, "emotion_entry", None)
+    existing = getattr(session, "emotion", None)
 
     context = {
         "session": session,
@@ -32,17 +31,24 @@ def emotion_history(request):
     """Trang xem lịch sử & thống kê cảm xúc"""
     profile = request.user.profile
 
-    weekly_history = EmotionStats.get_weekly_history(profile)
+    weekly_distribution = EmotionStats.get_weekly_emotion_distribution(profile)
     stats = EmotionStats.get_emotion_statistics(profile)
+    current_emotion = EmotionStats.get_current_emotion(profile)
 
     context = {
-        "weekly_history": weekly_history,
+        "weekly_distribution": weekly_distribution,
         "stats": stats,
-        "current_emotion": EmotionStats.get_current_emotion(profile),
+        "current_emotion": current_emotion,
         "active_page": "emotion",
     }
 
     return render(request, "emotion/emotion_view.html", context)
+
+
+@login_required
+def emotion_view(request):
+    """Alias cho emotion_history để giữ tương thích"""
+    return emotion_history(request)
 
 
 # ============================
@@ -89,18 +95,25 @@ def save_emotion(request):
 # ============================
 # API TRẢ DỮ LIỆU THỐNG KÊ
 # ============================
+
 @login_required
 def get_emotion_stats(request):
     """API trả về dữ liệu thống kê cảm xúc cho frontend"""
     profile = request.user.profile
 
-    weekly = EmotionStats.get_weekly_history(profile)
+    weekly_distribution = EmotionStats.get_weekly_emotion_distribution(profile)
     stats = EmotionStats.get_emotion_statistics(profile)
-    current = EmotionStats.get_current_emotion(profile)
+    current_emotion = EmotionStats.get_current_emotion(profile)
 
     return JsonResponse({
         "status": "success",
-        "current_mood": current,
-        "mood_history": weekly,
+        "current_mood": current_emotion,
+        "weekly_distribution": weekly_distribution,
         "mood_stats": stats,
     })
+
+
+@login_required
+def get_mood_data(request):
+    """Alias cho get_emotion_stats để giữ tương thích"""
+    return get_emotion_stats(request)

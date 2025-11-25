@@ -6,6 +6,7 @@ from django.conf import settings
 # Import Profile model để tạo profile khi user được tạo
 from .models import Profile
 
+# Luôn lấy User từ settings để support custom User
 User = settings.AUTH_USER_MODEL
 
 # Khi 1 user mới được tạo (created=True), signal này sẽ chạy và tạo Profile tương ứng.

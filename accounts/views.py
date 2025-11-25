@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
+# Đăng ký người dùng mới
 def register(request):
-    if request.method == "POST":
+    if request.method == "POST": # nếu người dùng đang gửi thông tin
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
