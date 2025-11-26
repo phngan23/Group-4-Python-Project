@@ -43,7 +43,7 @@ What sets Study Tracker apart is its multi-faceted approach to student productiv
 
 |Name | Student ID | Role | Key Contributions & Responsibilities | Contribution % |
 |------|-------|-------------------|-----------|----------|
-| **Nguyễn Phương Ngân**<br/>*(Project Leader)* | 11245914 | Backend Architect &<br/>Full-stack Integration | • Designed Database Architecture & User Authentication System<br/>• Engineered Pomodoro Timer & Study Tracking logicbr/>• Orchestrated comprehensive Backend-Frontend integration | 16.7% |
+| **Nguyễn Phương Ngân**<br/>*(Project Leader)* | 11245914 | Backend Architect &<br/>Full-stack Integration | • Designed Database Architecture & User Authentication System<br/>• Engineered Pomodoro Timer & Study Tracking logic<br/>• Orchestrated comprehensive Backend-Frontend integration | 16.7% |
 | **Đỗ Phạm Hà Chi**<br/>*(Frontend Lead)* | 11245851 | Frontend Architecture &<br/>Machine Learning | • Established Frontend Architecture & UI/UX standards<br/>• Developed AI models for Task Completion Prediction | 16.66% |
 | **Đinh Nguyễn Anh Thư**<br/>*(UI/UX Designer)* | 11245936 | Frontend Development &<br/>Gamification Design | • Designed Gamification ecosystem & Reward mechanisms<br/>• Created intuitive Web Interface & Visual assets | 16.66% |
 | **Lê Thùy Dương**<br/>*(Frontend Developer)* | 11245864 | Emotion Tracking &<br/>Interface Design | • Developed Emotion Tracking & Mood Analysis modules<br/>• Integrated Focus Music functionality<br/>• Created intuitive Web Interface & Visual assets | 16.66% |
