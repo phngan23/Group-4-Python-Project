@@ -2455,7 +2455,7 @@ body.dark-mode .game-header h2 {
 }
 
 body.dark-mode .game-header p {
-  color: var(--back);
+  color: var(--page-title);
 }
 
 body.dark-mode .unlock-message,
